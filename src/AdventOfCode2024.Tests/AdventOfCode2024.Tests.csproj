@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<!-- Enable the NUnit runner, this is an opt-in feature -->
+		<EnableNUnitRunner>true</EnableNUnitRunner>
+		<OutputType>Exe</OutputType>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="NUnit" />
+		<PackageReference Include="NUnit.Analyzers">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="NUnit3TestAdapter" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\AdventOfCode2024\AdventOfCode2024.csproj" />
+	</ItemGroup>
+</Project>
