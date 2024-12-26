@@ -8,6 +8,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 2
 202
+271
 
 # Day 3
 
