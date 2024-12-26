@@ -6,3 +6,4 @@ These are my notes for each day's solutions.
 
 
 # TODOs
+* Day 1 - Do a comparison on the difference between using a `List<>` and an `int[]`

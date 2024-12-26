@@ -5,5 +5,5 @@ RunDay1();
 static void RunDay1()
 {
 	Console.WriteLine(nameof(RunDay1));
-	SolutionDay1.Run();
+	Console.WriteLine(SolutionDay1.Run([.. File.ReadAllLines("Day1Input.txt")]));
 }

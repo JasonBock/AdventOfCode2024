@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<!-- Enable the NUnit runner, this is an opt-in feature -->
 		<EnableNUnitRunner>true</EnableNUnitRunner>
 		<OutputType>Exe</OutputType>
 		<IsTestProject>true</IsTestProject>
@@ -16,6 +15,6 @@
 		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\AdventOfCode2024\AdventOfCode2024.csproj" />
+		<ProjectReference Include="..\AdventOfCode2024\AdventOfCode2024.csproj" />
 	</ItemGroup>
 </Project>
