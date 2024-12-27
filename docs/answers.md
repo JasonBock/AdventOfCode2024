@@ -19,6 +19,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 1868
 
 # Day 5
+6384
 
 
 # Day 6
