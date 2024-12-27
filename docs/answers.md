@@ -20,7 +20,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 5
 6384
-
+5353
 
 # Day 6
 
