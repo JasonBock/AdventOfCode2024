@@ -24,6 +24,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 6
 5177
+1686
 
 # Day 7
 
