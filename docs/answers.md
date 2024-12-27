@@ -23,7 +23,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 5353
 
 # Day 6
-
+5177
 
 # Day 7
 
