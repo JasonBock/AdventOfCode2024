@@ -4,6 +4,23 @@ These are my notes for each day's solutions.
 
 ## Day 1:
 
+## Day 7:
+
+
+    3^2  3^1  3^0
+0:    A    A    A
+1:    A    A    M
+2:    A    A    C
+3:    A    M    A
+4:    A    M    M
+5:    A    M    C
+6:    A    C    A
+7:    A    C    M
+8:    A    C    C
+9:    M    A    A
+10:   M    A    M
+
+(Operation)(index / "power")
 
 # TODOs
 * Day 1
