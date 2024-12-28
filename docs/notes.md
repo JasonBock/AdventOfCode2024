@@ -6,7 +6,6 @@ These are my notes for each day's solutions.
 
 ## Day 7:
 
-
     3^2  3^1  3^0
 0:    A    A    A
 1:    A    A    M

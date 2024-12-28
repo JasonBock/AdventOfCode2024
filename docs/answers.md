@@ -31,7 +31,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 150077710195188
 
 # Day 8
-
+336
 
 # Day 9
 
