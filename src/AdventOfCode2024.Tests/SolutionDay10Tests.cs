@@ -22,11 +22,21 @@ public static class SolutionDay10Tests
 		Assert.That(SolutionDay10.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(36));
 	}
 
-	//[Test]
-	//public static void Part2()
-	//{
-	//	var input = "2333133121414131402";
+	[Test]
+	public static void Part2()
+	{
+		var input =
+			"""
+			89010123
+			78121874
+			87430965
+			96549874
+			45678903
+			32019012
+			01329801
+			10456732
+			""";
 
-	//	Assert.That(SolutionDay9.RunPart2(input), Is.EqualTo(2858));
-	//}
+		Assert.That(SolutionDay10.RunPart2([.. input.Split(Environment.NewLine)]), Is.EqualTo(81));
+	}
 }

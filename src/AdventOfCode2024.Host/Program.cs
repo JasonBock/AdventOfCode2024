@@ -87,5 +87,5 @@ static void RunDay10()
 {
 	Console.WriteLine(nameof(RunDay10));
 	Console.WriteLine($"Part 1 = {SolutionDay10.RunPart1([.. File.ReadAllLines("Day10Input.txt")])}");
-	//Console.WriteLine($"Part 2 = {SolutionDay9.RunPart2(File.ReadAllText("Day9Input.txt"))}");
+	Console.WriteLine($"Part 2 = {SolutionDay10.RunPart2([.. File.ReadAllLines("Day10Input.txt")])}");
 }
