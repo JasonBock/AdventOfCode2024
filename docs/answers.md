@@ -43,6 +43,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 1017
 
 # Day 11
+228668
 
 
 # Day 12

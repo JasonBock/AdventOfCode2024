@@ -21,6 +21,11 @@ These are my notes for each day's solutions.
 
 (Operation)(index / "power")
 
+## Day 11:
+
+9223372036854775807
+       395106562048
+
 # TODOs
 * Day 1
     * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
@@ -31,3 +36,6 @@ These are my notes for each day's solutions.
     * Part 1 - Took a bit of time to finish. Where was the bottleneck?
 * Day 10
     * Part 1 - Would be nice if `string` had a `IndexesOf()` - that is, gives you a collection of indexes for a given character. Maybe a Spackle feature?
+    * Part 1 - Parallelization would probably make this quicker.
+* Day 11
+    * Part 1 - `int digits = (int)Math.Floor(BigInteger.Log10(x) + 1);` - this may be a bit quicker, also to use for getting the "left" and "right" values.
