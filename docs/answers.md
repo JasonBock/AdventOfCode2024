@@ -32,9 +32,11 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 8
 336
+1131
 
 # Day 9
-
+6432869891895
+6467290479134
 
 # Day 10
 
