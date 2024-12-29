@@ -27,3 +27,7 @@ These are my notes for each day's solutions.
     * Part 2 - Should the arrays be sorted, or do something to handle previously discovered IDs?
 * Day 3
     * Can I make the regexs any better, especially for Part 2?
+* Day 9
+    * Part 1 - Took a bit of time to finish. Where was the bottleneck?
+* Day 10
+    * Part 1 - Would be nice if `string` had a `IndexesOf()` - that is, gives you a collection of indexes for a given character. Maybe a Spackle feature?
