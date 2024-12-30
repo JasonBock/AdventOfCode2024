@@ -26,6 +26,31 @@ These are my notes for each day's solutions.
 9223372036854775807
        395106562048
 
+x x
+
+x x x x x
+
+  x x x x
+
+    x x x
+
+    x x
+
+    x x x x
+
+    x x x x x
+
+  x x x
+
+  x x x x x
+
+  x x
+
+  x x x x x x x
+
+4 + 3 + 5 + 2 + 7
+
+
 # TODOs
 * Day 1
     * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`

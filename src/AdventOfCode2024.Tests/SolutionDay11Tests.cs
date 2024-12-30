@@ -5,28 +5,26 @@ namespace AdventOfCode2024.Day11.Tests;
 public static class SolutionDay11Tests
 {
 	[Test]
-	public static void Part1()
+	public static void Iterations5()
 	{
 		var input = "125 17";
 
-		Assert.That(SolutionDay11.RunPart1(input), Is.EqualTo(55312));
+		Assert.That(SolutionDay11.Run(input, 5), Is.EqualTo(13));
 	}
 
-	//[Test]
-	//public static void Part2()
-	//{
-	//	var input =
-	//		"""
-	//		89010123
-	//		78121874
-	//		87430965
-	//		96549874
-	//		45678903
-	//		32019012
-	//		01329801
-	//		10456732
-	//		""";
+	[Test]
+	public static void Iterations10()
+	{
+		var input = "125 17";
 
-	//	Assert.That(SolutionDay10.RunPart2([.. input.Split(Environment.NewLine)]), Is.EqualTo(81));
-	//}
+		Assert.That(SolutionDay11.Run(input, 10), Is.EqualTo(109));
+	}
+
+	[Test]
+	public static void Iterations25()
+	{
+		var input = "125 17";
+
+		Assert.That(SolutionDay11.Run(input, 25), Is.EqualTo(55312));
+	}
 }

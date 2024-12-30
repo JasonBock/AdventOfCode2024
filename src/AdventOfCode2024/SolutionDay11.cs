@@ -5,7 +5,7 @@ namespace AdventOfCode2024.Day11;
 
 public static class SolutionDay11
 {
-	public static long RunPart1(string input)
+	public static long Run(string input, int iterations)
 	{
 		ArgumentNullException.ThrowIfNull(input);
 
@@ -13,10 +13,31 @@ public static class SolutionDay11
 			.Select(_ => BigInteger.Parse(_, CultureInfo.CurrentCulture))
 			.ToList();
 
-		for (var i = 0; i < 25; i++)
-		{
-			Console.WriteLine($"(Current Iteration, Number of Stones): ({i}, {stones.Count})");
+		var stoneCount = 0;
+		var stoneIndex = 0;
 
+		foreach (var stone in stones)
+		{
+			Console.WriteLine($"At {stoneIndex} of {stones.Count}");
+
+			stoneCount += GetStoneCount(stone, iterations);
+			stoneIndex++;
+		}
+
+		return stoneCount;
+	}
+
+	private static int GetStoneCount(BigInteger seed, int iterations)
+	{
+		if (iterations == 0)
+		{
+			return 0;
+		}
+
+		var stones = new List<BigInteger> { seed };
+
+		for (var i = 0; i < 5; i++)
+		{
 			for (var s = stones.Count - 1; s >= 0; s--)
 			{
 				var stone = stones[s];
@@ -44,16 +65,17 @@ public static class SolutionDay11
 			}
 		}
 
-		Console.WriteLine($"Maximum Value: {stones.Max()}");
+		if (iterations == 5)
+		{
+			return stones.Count;
+		}
 
-		return stones.Count;
-	}
+		var totalStoneCount = 0;
 
-	public static long RunPart2(string input)
-	{
-		ArgumentNullException.ThrowIfNull(input);
-
-		var totalStoneCount = input.Length;
+		foreach (var stone in stones)
+		{
+			totalStoneCount += GetStoneCount(stone, iterations - 5);
+		}
 
 		return totalStoneCount;
 	}

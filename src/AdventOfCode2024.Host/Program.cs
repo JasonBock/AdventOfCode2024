@@ -9,6 +9,7 @@ using AdventOfCode2024.Day6;
 using AdventOfCode2024.Day7;
 using AdventOfCode2024.Day8;
 using AdventOfCode2024.Day9;
+using System.Diagnostics;
 
 //RunDay1();
 //RunDay2();
@@ -95,6 +96,11 @@ static void RunDay10()
 static void RunDay11()
 {
 	Console.WriteLine(nameof(RunDay11));
-	Console.WriteLine($"Part 1 = {SolutionDay11.RunPart1(File.ReadAllText("Day11Input.txt"))}");
-	//Console.WriteLine($"Part 2 = {SolutionDay10.RunPart2([.. File.ReadAllLines("Day10Input.txt")])}");
+	//Console.WriteLine($"Part 1 = {SolutionDay11.Run(File.ReadAllText("Day11Input.txt"), 25)}");
+
+	var stopWatch = Stopwatch.StartNew();
+	var stoneCount = SolutionDay11.Run(File.ReadAllText("Day11Input.txt"), 75);
+	stopWatch.Stop();
+	Console.WriteLine($"Part 2 = {stoneCount}");
+	Console.WriteLine($"Part 2 - Total Time = {stopWatch}");
 }
