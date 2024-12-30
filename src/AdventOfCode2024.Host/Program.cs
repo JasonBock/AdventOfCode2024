@@ -96,10 +96,10 @@ static void RunDay10()
 static void RunDay11()
 {
 	Console.WriteLine(nameof(RunDay11));
-	//Console.WriteLine($"Part 1 = {SolutionDay11.Run(File.ReadAllText("Day11Input.txt"), 25)}");
+	//Console.WriteLine($"Part 1 = {SolutionDay11.Run(File.ReadAllText("Day11Input.txt"), 45)}");
 
 	var stopWatch = Stopwatch.StartNew();
-	var stoneCount = SolutionDay11.Run(File.ReadAllText("Day11Input.txt"), 75);
+	var stoneCount = SolutionDay11.Run("0", 60);
 	stopWatch.Stop();
 	Console.WriteLine($"Part 2 = {stoneCount}");
 	Console.WriteLine($"Part 2 - Total Time = {stopWatch}");

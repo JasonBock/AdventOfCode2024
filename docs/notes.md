@@ -28,28 +28,115 @@ These are my notes for each day's solutions.
 
 x x
 
-x x x x x
+x x x
 
   x x x x
 
-    x x x
-
-    x x
+    x x x x x
 
     x x x x
+
+    x x x x x x x
 
     x x x x x
 
   x x x
 
+    x x x x x
+
+    x x x x
+
+    x x x
+
   x x x x x
 
-  x x
+    x x x x x
+    
+    x x x x x x x
+
+    x x x x x x x x
+
+    x x x x x
+
+    x x x x x
+
+  x x x
+
+    x x x
+
+    x x x x x
 
   x x x x x x x
 
-4 + 3 + 5 + 2 + 7
+    x x x x x x x x x x
 
+    x x x x x x x x x
+
+    x x x x x x x x x x x
+
+    x x x x x x x x x x x x
+
+    x x x x x x x
+
+    x x x x x x x
+    
+    x x x x x x x x x
+
+25 => 00:00:00.0177952
+30 => 00:00:00.0525373
+35 => 00:00:00.3191811
+40 => 00:00:01.2586611
+45 => 00:00:09.5249220
+50 => 00:01:12.4605297
+
+For 25 iterations, what's the count for values 0 to 9, 20, 24, and 4048?
+
+Value |      Count
+------------------
+    0 | 19778
+    1 | 29165
+    2 | 27842
+    3 | 27569
+    4 | 26669
+    5 | 23822
+    6 | 25469
+    7 | 25071
+    8 | 24212
+    9 | 25793
+   20 | 31055
+   24 | 36669
+   40 | 30300
+   48 | 33975
+ 2024 | 43726
+ 4048 | 42646
+
+For 50 iterations, what's the count for values 0 to 9, 20, 24, and 4048?
+
+Value |      Count
+------------------
+    0 |  663251546
+    1 | 1010392024
+    2 |  967190364
+    3 |  967436144
+    4 |  939523808
+    5 |  830902728
+    6 |  884539345
+    7 |  870467992
+    8 |  841069902
+    9 |  897592763
+   20 | 1072629280
+   24 | 1254513380
+   40 | 1056089110
+   48 | 1174092474
+ 2024 | 1529921658 
+ 4048 | 1464254721
+
+25 => 
+30 => 
+35 => 
+40 => 
+45 => 
+50 => 
 
 # TODOs
 * Day 1
@@ -62,5 +149,3 @@ x x x x x
 * Day 10
     * Part 1 - Would be nice if `string` had a `IndexesOf()` - that is, gives you a collection of indexes for a given character. Maybe a Spackle feature?
     * Part 1 - Parallelization would probably make this quicker.
-* Day 11
-    * Part 1 - `int digits = (int)Math.Floor(BigInteger.Log10(x) + 1);` - this may be a bit quicker, also to use for getting the "left" and "right" values.
