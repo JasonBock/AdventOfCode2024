@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Immutable;
+using System.Globalization;
 using System.Numerics;
 
 namespace AdventOfCode2024.Day11;
@@ -53,20 +54,12 @@ public static class SolutionDay11
 			.Select(_ => BigInteger.Parse(_, CultureInfo.CurrentCulture))
 			.ToList();
 
-		var stoneCountTasks = new List<Task<BigInteger>>();
+		var stoneCount = BigInteger.Zero;
 
 		foreach (var stone in stones)
 		{
-			stoneCountTasks.Add(Task.Run(() => GetStoneCount(stone, iterations)));
-		}
-
-		Task.WaitAll(stoneCountTasks);
-
-		var stoneCount = BigInteger.Zero;
-
-		foreach (var stoneCountTask in stoneCountTasks)
-		{
-			stoneCount += stoneCountTask.Result;
+			//stoneCount += GetStoneCount(stone, iterations);
+			stoneCount += new StoneCountGenerator(stone, iterations).Count;
 		}
 
 		return stoneCount;
@@ -123,4 +116,140 @@ public static class SolutionDay11
 			}
 		}
 	}
+}
+
+public sealed class StoneCountGenerator
+{
+	private readonly Dictionary<(BigInteger, int), BigInteger> map = [];
+	private readonly ImmutableArray<BigInteger> targets =
+	[
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+		20, 24, 26, 28, 32, 36, 40, 48, 
+		56, 57, 60, 67, 72, 77, 80, 84, 
+		86, 91, 94, 96, 2024, 2048, 2457, 
+		2608, 2867, 2880, 3277, 3686, 4048, 
+		6032, 6072, 8096, 9184, 9456, 10120, 
+		12144, 14168, 16192, 18216, 20482880, 
+		24579456, 28676032, 32772608, 36869184
+	];
+
+	public StoneCountGenerator(BigInteger stone, int iterations) =>
+		(this.Iterations, this.Count) = (iterations, this.GetStoneCount(stone, iterations));
+
+	private BigInteger GetStoneCount(BigInteger stone, int iterations)
+	{
+		if (this.map.TryGetValue((stone, iterations), out var precompute))
+		{
+			return precompute;
+		}
+
+		if (stone == BigInteger.Zero)
+		{
+			if (iterations == 1)
+			{
+				_ = this.map.TryAdd((stone, 1), 1);
+				return 1;
+			}
+
+			stone = BigInteger.One;
+
+			var count = this.GetStoneCount(stone, iterations - 1);
+			_ = this.map.TryAdd((stone, iterations - 1), count);
+			return count;
+		}
+		else
+		{
+			var stoneDigits = (int)Math.Floor(BigInteger.Log10(stone) + 1);
+
+			if (stoneDigits % 2 == 0)
+			{
+				if (iterations == 1)
+				{
+					if (this.targets.Contains(stone))
+					{
+						_ = this.map.TryAdd((stone, 1), 2);
+					}
+
+					return 2;
+				}
+
+				var splitter = BigInteger.Pow(10, stoneDigits / 2);
+				var (quotient, remainder) = BigInteger.DivRem(stone, splitter);
+
+				var quotientCount = this.GetStoneCount(quotient, iterations - 1);
+				var remainderCount = this.GetStoneCount(remainder, iterations - 1);
+
+				if (this.targets.Contains(quotient))
+				{
+					_ = this.map.TryAdd((quotient, iterations - 1), quotientCount);
+				}
+
+				if (this.targets.Contains(remainder))
+				{
+					_ = this.map.TryAdd((remainder, iterations - 1), remainderCount);
+				}
+
+				return quotientCount + remainderCount;
+			}
+			else
+			{
+				if (iterations == 1)
+				{
+					_ = this.map.TryAdd((stone, 1), 1);
+					return 1;
+				}
+
+				stone *= 2_024;
+				return this.GetStoneCount(stone, iterations - 1);
+			}
+		}
+	}
+
+	public BigInteger Count { get; }
+
+	public int Iterations { get; }
+}
+
+public sealed class StoneListGenerator
+{
+	public StoneListGenerator(BigInteger stone, int iterations)
+	{
+		var stones = new List<BigInteger>() { stone };
+
+		for (var i = 0; i < iterations; i++)
+		{
+			for (var j = stones.Count - 1; j >= 0; j--)
+			{
+				var iterationStone = stones[j];
+
+				if (iterationStone == BigInteger.Zero)
+				{
+					stones[j] = BigInteger.One;
+				}
+				else
+				{
+					var iterationStoneDigits = (int)Math.Floor(BigInteger.Log10(iterationStone) + 1);
+
+					if (iterationStoneDigits % 2 == 0)
+					{
+						var splitter = BigInteger.Pow(10, iterationStoneDigits / 2);
+						var (quotient, remainder) = BigInteger.DivRem(iterationStone, splitter);
+
+						stones[j] = quotient;
+						stones.Insert(j, remainder);
+					}
+					else
+					{
+						stones[j] *= 2_024;
+					}
+				}
+			}
+		}
+
+		this.Stones = [.. stones];
+	}
+
+	public ImmutableArray<BigInteger> Stones { get; }
+
+	public int Iterations { get; }
 }
