@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Globalization;
 using System.Numerics;
+using Precomputes = System.Collections.Generic.Dictionary<(System.Numerics.BigInteger, int), System.Numerics.BigInteger>;
 
 namespace AdventOfCode2024.Day11;
 
@@ -55,11 +56,13 @@ public static class SolutionDay11
 			.ToList();
 
 		var stoneCount = BigInteger.Zero;
+		Precomputes precomputes = [];
 
 		foreach (var stone in stones)
 		{
-			//stoneCount += GetStoneCount(stone, iterations);
-			stoneCount += new StoneCountGenerator(stone, iterations).Count;
+			var generator = new StoneCountGenerator(stone, iterations, precomputes);
+			precomputes = generator.Precomputes;
+			stoneCount += generator.Count;
 		}
 
 		return stoneCount;
@@ -120,7 +123,6 @@ public static class SolutionDay11
 
 public sealed class StoneCountGenerator
 {
-	private readonly Dictionary<(BigInteger, int), BigInteger> map = [];
 	private readonly ImmutableArray<BigInteger> targets =
 	[
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
@@ -133,12 +135,15 @@ public sealed class StoneCountGenerator
 		24579456, 28676032, 32772608, 36869184
 	];
 
-	public StoneCountGenerator(BigInteger stone, int iterations) =>
+   public StoneCountGenerator(BigInteger stone, int iterations, Precomputes precomputes)
+   {
+		this.Precomputes = precomputes;
 		(this.Iterations, this.Count) = (iterations, this.GetStoneCount(stone, iterations));
+   }
 
-	private BigInteger GetStoneCount(BigInteger stone, int iterations)
+   private BigInteger GetStoneCount(BigInteger stone, int iterations)
 	{
-		if (this.map.TryGetValue((stone, iterations), out var precompute))
+		if (this.Precomputes.TryGetValue((stone, iterations), out var precompute))
 		{
 			return precompute;
 		}
@@ -147,14 +152,14 @@ public sealed class StoneCountGenerator
 		{
 			if (iterations == 1)
 			{
-				_ = this.map.TryAdd((stone, 1), 1);
+				_ = this.Precomputes.TryAdd((stone, 1), 1);
 				return 1;
 			}
 
 			stone = BigInteger.One;
 
 			var count = this.GetStoneCount(stone, iterations - 1);
-			_ = this.map.TryAdd((stone, iterations - 1), count);
+			_ = this.Precomputes.TryAdd((stone, iterations - 1), count);
 			return count;
 		}
 		else
@@ -167,7 +172,7 @@ public sealed class StoneCountGenerator
 				{
 					if (this.targets.Contains(stone))
 					{
-						_ = this.map.TryAdd((stone, 1), 2);
+						_ = this.Precomputes.TryAdd((stone, 1), 2);
 					}
 
 					return 2;
@@ -181,12 +186,12 @@ public sealed class StoneCountGenerator
 
 				if (this.targets.Contains(quotient))
 				{
-					_ = this.map.TryAdd((quotient, iterations - 1), quotientCount);
+					_ = this.Precomputes.TryAdd((quotient, iterations - 1), quotientCount);
 				}
 
 				if (this.targets.Contains(remainder))
 				{
-					_ = this.map.TryAdd((remainder, iterations - 1), remainderCount);
+					_ = this.Precomputes.TryAdd((remainder, iterations - 1), remainderCount);
 				}
 
 				return quotientCount + remainderCount;
@@ -195,7 +200,7 @@ public sealed class StoneCountGenerator
 			{
 				if (iterations == 1)
 				{
-					_ = this.map.TryAdd((stone, 1), 1);
+					_ = this.Precomputes.TryAdd((stone, 1), 1);
 					return 1;
 				}
 
@@ -206,8 +211,8 @@ public sealed class StoneCountGenerator
 	}
 
 	public BigInteger Count { get; }
-
 	public int Iterations { get; }
+	public Precomputes Precomputes { get; }
 }
 
 public sealed class StoneListGenerator

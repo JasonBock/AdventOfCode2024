@@ -95,19 +95,6 @@ static void RunDay10()
 static void RunDay11()
 {
 	Console.WriteLine(nameof(RunDay11));
-
-	//var listGenerator = new StoneListGenerator(0, 22);
-	//var uniqueStoneList = new HashSet<BigInteger>(listGenerator.Stones.Sort());
-	//Console.WriteLine(uniqueStoneList.Count);
-	//Console.WriteLine(string.Join(' ', uniqueStoneList));
-	//Console.WriteLine(string.Join(' ', listGenerator.Stones));
-
 	Console.WriteLine($"Part 1 = {SolutionDay11.Run(File.ReadAllText("Day11Input.txt"), 25)}");
 	Console.WriteLine($"Part 2 = {SolutionDay11.Run(File.ReadAllText("Day11Input.txt"), 75)}");
-
-	//var stopWatch = Stopwatch.StartNew();
-	//var stoneCount = SolutionDay11.Run("0", 60);
-	//stopWatch.Stop();
-	//Console.WriteLine($"Part 2 = {stoneCount}");
-	//Console.WriteLine($"Part 2 - Total Time = {stopWatch}");
 }
