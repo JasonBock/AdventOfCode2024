@@ -48,6 +48,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 12
 1533644
+936718
 
 # Day 13
 

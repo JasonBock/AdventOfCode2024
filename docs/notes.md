@@ -1,10 +1,8 @@
 # Advent of Code 2024 Notes
 
-These are my notes for each day's solutions.
+These are my notes for each day's solutions, if I had any.
 
-## Day 1:
-
-## Day 7:
+## Day 7
 
     3^2  3^1  3^0
 0:    A    A    A
@@ -21,7 +19,7 @@ These are my notes for each day's solutions.
 
 (Operation)(index / "power")
 
-## Day 11:
+## Day 11
 
 9223372036854775807
        395106562048
@@ -218,6 +216,11 @@ More ideas:
 * Find the magic 54 values from the "hint". Any time that is computed, add it to the map. That should give `54 * 75 = 4050`. 4K key/values is not a big deal.
 * Consider doing persistence around the map.
 * Consider reintroducing tasks and change to `ConcurrentDictionary<(BigInteger, int), BigInteger>`.
+
+## Day 12
+
+### Part 2
+I'm dumb. I make a new line if I find more than one line, but I never add that new line to the line list. This doesn't come up in the unit tests, but in the main problem, it does. Oops. Need to fix that.
 
 # TODOs
 * Day 1
