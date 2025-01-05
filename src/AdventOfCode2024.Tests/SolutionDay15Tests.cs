@@ -55,4 +55,35 @@ public static class SolutionDay15Tests
 
 		Assert.That(SolutionDay15.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(new BigInteger(10092)));
 	}
+
+	[Test]
+	public static void Part2()
+	{
+		var input =
+			"""
+			##########
+			#..O..O.O#
+			#......O.#
+			#.OO..O.O#
+			#..O@..O.#
+			#O#..O...#
+			#O..O..O.#
+			#.OO.O.OO#
+			#....O...#
+			##########
+
+			<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^
+			vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
+			><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<
+			<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^
+			^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><
+			^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^
+			>^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
+			<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
+			^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
+			v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^
+			""";
+
+		Assert.That(SolutionDay15.RunPart2([.. input.Split(Environment.NewLine)]), Is.EqualTo(new BigInteger(9021)));
+	}
 }

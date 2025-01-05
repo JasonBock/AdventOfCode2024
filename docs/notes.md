@@ -318,6 +318,9 @@ Could change this for Part 1. Basically, a and b have to be positive with no rem
 [11] = {Robot { Position = Position { X = 6, Y = 6 }, Velocity = Velocity { XChange = -3, YChange = -3 } }}
 [2] = {Robot { Position = Position { X = 9, Y = 0 }, Velocity = Velocity { XChange = -1, YChange = 2 } }}
 
+Vertical Clumps: 14, 115, 216, 317,
+Horizontal Clumps: 94, 197, 300, 
+
 # TODOs
 * Day 1
     * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
