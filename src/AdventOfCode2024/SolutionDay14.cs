@@ -24,26 +24,62 @@ public static class SolutionDay14
 			}
 		}
 
-		return 
-			robots.Count(r => 
-				r.Position.X >= 0 && r.Position.X < xMax / 2 && 
+		return
+			robots.Count(r =>
+				r.Position.X >= 0 && r.Position.X < xMax / 2 &&
 				r.Position.Y >= 0 && r.Position.Y < yMax / 2) *
-			robots.Count(r => 
-				r.Position.X > (xMax / 2) && r.Position.X < xMax && 
+			robots.Count(r =>
+				r.Position.X > (xMax / 2) && r.Position.X < xMax &&
 				r.Position.Y >= 0 && r.Position.Y < yMax / 2) *
-			robots.Count(r => 
-				r.Position.X >= 0 && r.Position.X < xMax / 2 && 
+			robots.Count(r =>
+				r.Position.X >= 0 && r.Position.X < xMax / 2 &&
 				r.Position.Y > (yMax / 2) && r.Position.Y < yMax) *
-			robots.Count(r => 
-				r.Position.X > (xMax / 2) && r.Position.X < xMax && 
+			robots.Count(r =>
+				r.Position.X > (xMax / 2) && r.Position.X < xMax &&
 				r.Position.Y > (yMax / 2) && r.Position.Y < yMax);
 	}
 
-	public static BigInteger RunPart2(ImmutableArray<string> input)
+	public static void RunPart2(ImmutableArray<string> input, int xMax, int yMax)
 	{
 		var robots = SolutionDay14.GetRobots(input);
+		var increment = 0;
 
-		return robots.Count;
+		while (true)
+		{
+			Console.Clear();
+
+			increment++;
+
+			//Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine($"Increment: {increment}");
+
+			for (var r = 0; r < robots.Count; r++)
+			{
+				var robot = robots[r];
+				var newPosition = new Position(
+					((robot.Position.X + robot.Velocity.XChange) + xMax) % xMax,
+					((robot.Position.Y + robot.Velocity.YChange) + yMax) % yMax);
+				robots[r] = robot with { Position = newPosition };
+			}
+
+			if (increment % xMax == 14 || increment % yMax == 94)
+			{
+				for (var y = 0; y < yMax; y++)
+				{
+					var yRobots = robots.Where(r => r.Position.Y == y).ToList();
+					var display = new string(' ', xMax).ToCharArray();
+
+					foreach (var yRobot in yRobots)
+					{
+						display[yRobot.Position.X] = '*';
+					}
+
+					Console.WriteLine(new string(display));
+				}
+
+				Console.ReadLine();
+			}
+		}
 	}
 
 	private static List<Robot> GetRobots(ImmutableArray<string> input)
