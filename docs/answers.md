@@ -56,8 +56,10 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 14
 225943500
+6377
 
 # Day 15
+1486930
 
 
 # Day 16

@@ -6,8 +6,6 @@ namespace AdventOfCode2024.Day14;
 
 public static class SolutionDay14
 {
-	public static int StringComparision { get; private set; }
-
 	public static BigInteger RunPart1(ImmutableArray<string> input, int xMax, int yMax)
 	{
 		var robots = SolutionDay14.GetRobots(input);
