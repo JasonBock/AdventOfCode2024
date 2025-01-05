@@ -222,6 +222,85 @@ More ideas:
 ### Part 2
 I'm dumb. I make a new line if I find more than one line, but I never add that new line to the line list. This doesn't come up in the unit tests, but in the main problem, it does. Oops. Need to fix that.
 
+## Day 13
+
+### Part 1
+
+94A + 22B = 8400
+34A + 67B = 5400
+
+### Part 2
+
+10_000_000_000_000
+Possible idea: https://faculty.uml.edu/dklain/optimization.pdf
+
+Minimize: 
+  3a + b
+Constraints:
+  AXa + BXb = RX
+  AYa + BYb = RY
+
+Doing some transforming...
+
+Maximize:
+  -3a - b
+Constraints:
+  AXa + BXb <= RX
+  -AXa - BXb <= -RX
+  AYa + BYb <= RY
+  -AYa - BYb <= -RY
+
+Whatever the answer is (if there is one), then reverse the sign.
+
+Or...
+
+94*A+22*B=8400
+34*A+67*B=5400
+
+22B = 8400 - 94A
+B = (8400 - 94A) / 22
+
+34A + 67((8400 - 94A) / 22) = 5400
+
+34A + 67(8400/22) - 67(94A / 22) = 5400
+
+34A + 562800/22 - 6298A / 22 = 5400
+
+748A + 562800 - 6298A = 118800
+
+562800 - 5550A = 118800
+
+-5550A = -444000
+
+A = 80
+
+To generalize:
+
+AXa + BXb = RX
+AYa + BYb = RY
+
+BXb = RX - AXa
+b = (RX - AXa) / BX
+
+AYa + BY((RX - AXa) / BX) = RY
+
+AYa + BY(RX/BX) - BY(AXa / BX) = RY
+
+AYa + ((BY * RX) / BX) - ((BY * AXa) / BX) = RY
+
+(AY * BX)a + (BY * RX) - (BY * AXa) = (RY * BX)
+
+(AY * BX)a - (BY * AX)a = (RY * BX) - (BY * RX)
+
+a = ((RY * BX) - (BY * RX)) / ((AY * BX) - (BY * AX))
+
+Therefore:
+
+a = ((RY * BX) - (BY * RX)) / ((AY * BX) - (BY * AX))
+b = (RX - AXa) / BX
+
+Could change this for Part 1. Basically, a and b have to be positive with no remainder after division. I'm assuming now there can be only zero or one solution. If this gives the same answer, then Part 2 is the same thing, except the prize's X and Y values are added by 10 trillion (or whatever that big value is).
+
 # TODOs
 * Day 1
     * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`

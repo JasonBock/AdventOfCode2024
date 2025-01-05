@@ -1,46 +1,65 @@
 ﻿using System.Collections.Immutable;
 using System.Globalization;
+using System.Numerics;
 
 namespace AdventOfCode2024.Day13;
 
 public static class SolutionDay13
 {
-	public static long RunPart1(ImmutableArray<string> input)
+	public static BigInteger RunPart1(ImmutableArray<string> input)
 	{
 		var machines = SolutionDay13.GetMachines(input);
 
-		var totalTokens = 0L;
+		var totalTokens = BigInteger.Zero;
 
 		foreach (var machine in machines)
 		{
-			var tokenCosts = new List<long>();
+			var aNumerator = ((machine.Reward.Y * machine.B.XIncrement) - (machine.B.YIncrement * machine.Reward.X));
+			var aDenominator = ((machine.A.YIncrement * machine.B.XIncrement) - (machine.B.YIncrement * machine.A.XIncrement));
+			var (aQuotient, aRemainder) = BigInteger.DivRem(aNumerator, aDenominator);
 
-			for (var a = 1; a <= 100; a++)
+			if (aQuotient > 0 && aRemainder == 0)
 			{
-				for (var b = 1; b <= 100; b++)
+				var bNumerator = (machine.Reward.X - (machine.A.XIncrement * aQuotient));
+				var (bQuotient, bRemainder) = BigInteger.DivRem(bNumerator, machine.B.XIncrement);
+
+				if (bQuotient > 0 && bRemainder == 0)
 				{
-					if ((machine.A.XIncrement * a) + (machine.B.XIncrement * b) == machine.Reward.X &&
-						(machine.A.YIncrement * a) + (machine.B.YIncrement * b) == machine.Reward.Y)
-					{
-						tokenCosts.Add((3 * a) + b);
-					}
+					totalTokens += (3 * aQuotient) + bQuotient;
 				}
-			}
-
-			if (tokenCosts.Count > 0)
-			{
-				totalTokens += tokenCosts.Min();
 			}
 		}
 
 		return totalTokens;
 	}
 
-	public static long RunPart2(ImmutableArray<string> input)
+	public static BigInteger RunPart2(ImmutableArray<string> input)
 	{
-		var x = input.Length;
+		var prizeOffset = new BigInteger(10_000_000_000_000L);
 
-		return x;
+		var machines = SolutionDay13.GetMachines(input);
+
+		var totalTokens = BigInteger.Zero;
+
+		foreach (var machine in machines)
+		{
+			var aNumerator = (((machine.Reward.Y + prizeOffset) * machine.B.XIncrement) - (machine.B.YIncrement * (machine.Reward.X + prizeOffset)));
+			var aDenominator = ((machine.A.YIncrement * machine.B.XIncrement) - (machine.B.YIncrement * machine.A.XIncrement));
+			var (aQuotient, aRemainder) = BigInteger.DivRem(aNumerator, aDenominator);
+
+			if (aQuotient > 0 && aRemainder == 0)
+			{
+				var bNumerator = ((machine.Reward.X + prizeOffset) - (machine.A.XIncrement * aQuotient));
+				var (bQuotient, bRemainder) = BigInteger.DivRem(bNumerator, machine.B.XIncrement);
+
+				if (bQuotient > 0 && bRemainder == 0)
+				{
+					totalTokens += (3 * aQuotient) + bQuotient;
+				}
+			}
+		}
+
+		return totalTokens;
 	}
 
 	private static ImmutableArray<Machine> GetMachines(ImmutableArray<string> input)
@@ -105,6 +124,6 @@ public static class SolutionDay13
 	}
 }
 
-public sealed record Button(int XIncrement, int YIncrement);
-public sealed record Prize(int X, int Y);
+public sealed record Button(BigInteger XIncrement, BigInteger YIncrement);
+public sealed record Prize(BigInteger X, BigInteger Y);
 public sealed record Machine(Button A, Button B, Prize Reward);
