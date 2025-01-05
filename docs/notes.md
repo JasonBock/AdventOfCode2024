@@ -301,6 +301,23 @@ b = (RX - AXa) / BX
 
 Could change this for Part 1. Basically, a and b have to be positive with no remainder after division. I'm assuming now there can be only zero or one solution. If this gives the same answer, then Part 2 is the same thing, except the prize's X and Y values are added by 10 trillion (or whatever that big value is).
 
+## Day 14
+
+### Part 1
+
+[8] = {Robot { Position = Position { X = 0, Y = 2 }, Velocity = Velocity { XChange = 2, YChange = 3 } }}
+[5] = {Robot { Position = Position { X = 1, Y = 3 }, Velocity = Velocity { XChange = -2, YChange = -2 } }}
+[4] = {Robot { Position = Position { X = 1, Y = 6 }, Velocity = Velocity { XChange = 1, YChange = 3 } }}
+[7] = {Robot { Position = Position { X = 2, Y = 3 }, Velocity = Velocity { XChange = -1, YChange = -2 } }}
+[0] = {Robot { Position = Position { X = 3, Y = 5 }, Velocity = Velocity { XChange = 3, YChange = -3 } }}
+[3] = {Robot { Position = Position { X = 4, Y = 5 }, Velocity = Velocity { XChange = 2, YChange = -1 } }}
+[10] = {Robot { Position = Position { X = 4, Y = 5 }, Velocity = Velocity { XChange = 2, YChange = -3 } }}
+[1] = {Robot { Position = Position { X = 5, Y = 4 }, Velocity = Velocity { XChange = -1, YChange = -3 } }}
+[6] = {Robot { Position = Position { X = 6, Y = 0 }, Velocity = Velocity { XChange = -1, YChange = -3 } }}
+[9] = {Robot { Position = Position { X = 6, Y = 0 }, Velocity = Velocity { XChange = -1, YChange = 2 } }}
+[11] = {Robot { Position = Position { X = 6, Y = 6 }, Velocity = Velocity { XChange = -3, YChange = -3 } }}
+[2] = {Robot { Position = Position { X = 9, Y = 0 }, Velocity = Velocity { XChange = -1, YChange = 2 } }}
+
 # TODOs
 * Day 1
     * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
