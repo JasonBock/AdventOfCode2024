@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace AdventOfCode2024.Day16;
 
-public static class SolutiDay16
+public static class SolutionDay16
 {
 	public static BigInteger RunPart1(ImmutableArray<string> input)
 	{
