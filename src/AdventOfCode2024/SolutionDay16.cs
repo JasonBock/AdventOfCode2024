@@ -5,10 +5,13 @@ namespace AdventOfCode2024.Day16;
 
 public static class SolutionDay16
 {
-	public static BigInteger RunPart1(ImmutableArray<string> input)
+	private const char End = 'E';
+	private const char Start = 'S';
+   private const char Wall = '#';
+
+   public static BigInteger RunPart1(ImmutableArray<string> input)
 	{
 		var mapItems = SolutionDay16.ParseInput(input);
-
 
 		var minimalCost = 0;
 
@@ -27,7 +30,7 @@ public static class SolutionDay16
 			{
 				var mapType = data[x];
 
-				if (mapType == 'S' || mapType == 'E' || mapType == '#')
+				if (mapType == Start || mapType == End || mapType == Wall)
 				{
 					mapItems.Add(new MapItem(mapType, new Position(x, y)));
 				}
