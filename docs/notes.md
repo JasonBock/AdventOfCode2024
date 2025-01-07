@@ -321,6 +321,29 @@ Could change this for Part 1. Basically, a and b have to be positive with no rem
 Vertical Clumps: 14, 115, 216, 317,
 Horizontal Clumps: 94, 197, 300, 
 
+## Day 15
+
+### Part 2
+
+[][]
+[]
+@
+
+[]
+[][]
+@
+
+
+   #
+[][]
+[]
+@
+
+[] #
+[][]
+@
+
+
 # TODOs
 * Day 1
     * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`

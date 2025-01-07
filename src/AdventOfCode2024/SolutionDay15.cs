@@ -178,14 +178,113 @@ public static class SolutionDay15
 			{
 				var robot = entities.Single(r => r is Robot);
 
-				var entitiesToMove = new List<Entity>();
-
 				if (movementCommand == '^')
 				{
+					var entityItemsToMove = new List<HashSet<Entity>>();
 
+					var currentItems = new HashSet<Entity> { robot };
+
+					while (true)
+					{
+						entityItemsToMove.Add(currentItems);
+						var isProcessingComplete = false;
+						var newCurrentItems = new HashSet<Entity>();
+
+						foreach (var currentItem in currentItems)
+						{
+							if (currentItem is Robot currentRobot)
+							{
+								var nextItem = entities.SingleOrDefault(e =>
+									(e is Box b &&
+										((b.LeftPosition.X == currentRobot.Position.X && b.LeftPosition.Y == currentRobot.Position.Y - 1) ||
+										(b.RightPosition.X == currentRobot.Position.X && b.RightPosition.Y == currentRobot.Position.Y - 1)) ||
+									(e is Wall w && w.Position.X == currentRobot.Position.X && w.Position.Y == currentRobot.Position.Y - 1)));
+
+								if (nextItem is null)
+								{
+									isProcessingComplete = true;
+									break;
+								}
+								else if (nextItem is Box)
+								{
+									newCurrentItems.Add(nextItem);
+								}
+								else
+								{
+									entityItemsToMove.Clear();
+									isProcessingComplete = true;
+									break;
+								}
+							}
+							else
+							{
+								var currentBox = (Box)currentItem;
+
+								if (entities.Any(e => e is Wall w &&
+									((w.Position.X == currentBox.LeftPosition.X && w.Position.Y == currentBox.LeftPosition.Y - 1) ||
+									(w.Position.X == currentBox.RightPosition.X && w.Position.Y == currentBox.RightPosition.Y - 1))))
+								{
+									entityItemsToMove.Clear();
+									isProcessingComplete = true;
+									break;
+								}
+								else
+								{
+									var nextItems = entities.Where(e =>
+										(e is Box b &&
+											((b.LeftPosition.X == currentBox.LeftPosition.X && b.LeftPosition.Y == currentBox.LeftPosition.Y - 1) ||
+											(b.RightPosition.X == currentBox.LeftPosition.X && b.RightPosition.Y == currentBox.LeftPosition.Y - 1) ||
+											(b.LeftPosition.X == currentBox.RightPosition.X && b.LeftPosition.Y == currentBox.RightPosition.Y - 1)))).ToList();
+
+									if (nextItems.Count == 0)
+									{
+										continue;
+									}
+									else
+									{
+										foreach (var nextItem in nextItems)
+										{
+											newCurrentItems.Add(nextItem);
+										}
+									}
+								}
+							}
+						}
+
+						if (newCurrentItems.Count == 0 || isProcessingComplete)
+						{
+							break;
+						}
+
+						currentItems = newCurrentItems;
+					}
+
+					if (entityItemsToMove.Count > 0)
+					{
+						foreach (var entitiesToMove in entityItemsToMove)
+						{
+							foreach (var entityToMove in entitiesToMove)
+							{
+								entities.Remove(entityToMove);
+
+								if (entityToMove is Robot r)
+								{
+									entities.Add(new Robot(new Position(r.Position.X, r.Position.Y - 1)));
+								}
+								else if (entityToMove is Box b)
+								{
+									entities.Add(new Box(
+										new Position(b.LeftPosition.X, b.LeftPosition.Y - 1),
+										new Position(b.RightPosition.X, b.RightPosition.Y - 1)));
+								}
+							}
+						}
+					}
 				}
 				else if (movementCommand == '>')
 				{
+					var entitiesToMove = new List<Entity>();
+
 					var currentItem = robot;
 
 					while (true)
@@ -193,8 +292,7 @@ public static class SolutionDay15
 						entitiesToMove.Add(currentItem);
 						var currentItemPosition = currentItem is Robot r ?
 							r.Position :
-							currentItem is Box b ?
-								b.RightPosition : (currentItem as Wall)!.Position;
+							(currentItem as Box)!.RightPosition;
 
 						var nextItem = entities.SingleOrDefault(e =>
 							(e is Box b && b.LeftPosition.X == currentItemPosition.X + 1 && b.LeftPosition.Y == currentItemPosition.Y) ||
@@ -236,10 +334,110 @@ public static class SolutionDay15
 				}
 				else if (movementCommand == 'v')
 				{
+					var entityItemsToMove = new List<HashSet<Entity>>();
 
+					var currentItems = new HashSet<Entity> { robot };
+
+					while (true)
+					{
+						entityItemsToMove.Add(currentItems);
+						var isProcessingComplete = false;
+						var newCurrentItems = new HashSet<Entity>();
+
+						foreach (var currentItem in currentItems)
+						{
+							if (currentItem is Robot currentRobot)
+							{
+								var nextItem = entities.SingleOrDefault(e =>
+									(e is Box b &&
+										((b.LeftPosition.X == currentRobot.Position.X && b.LeftPosition.Y == currentRobot.Position.Y + 1) ||
+										(b.RightPosition.X == currentRobot.Position.X && b.RightPosition.Y == currentRobot.Position.Y + 1)) ||
+									(e is Wall w && w.Position.X == currentRobot.Position.X && w.Position.Y == currentRobot.Position.Y + 1)));
+
+								if (nextItem is null)
+								{
+									isProcessingComplete = true;
+									break;
+								}
+								else if (nextItem is Box)
+								{
+									newCurrentItems.Add(nextItem);
+								}
+								else
+								{
+									entityItemsToMove.Clear();
+									isProcessingComplete = true;
+									break;
+								}
+							}
+							else
+							{
+								var currentBox = (Box)currentItem;
+
+								if (entities.Any(e => e is Wall w &&
+									((w.Position.X == currentBox.LeftPosition.X && w.Position.Y == currentBox.LeftPosition.Y + 1) ||
+									(w.Position.X == currentBox.RightPosition.X && w.Position.Y == currentBox.RightPosition.Y + 1))))
+								{
+									entityItemsToMove.Clear();
+									isProcessingComplete = true;
+									break;
+								}
+								else
+								{
+									var nextItems = entities.Where(e =>
+										(e is Box b &&
+											((b.LeftPosition.X == currentBox.LeftPosition.X && b.LeftPosition.Y == currentBox.LeftPosition.Y + 1) ||
+											(b.RightPosition.X == currentBox.LeftPosition.X && b.RightPosition.Y == currentBox.LeftPosition.Y + 1) ||
+											(b.LeftPosition.X == currentBox.RightPosition.X && b.LeftPosition.Y == currentBox.RightPosition.Y + 1)))).ToList();
+
+									if (nextItems.Count == 0)
+									{
+										continue;
+									}
+									else
+									{
+										foreach (var nextItem in nextItems)
+										{
+											newCurrentItems.Add(nextItem);
+										}
+									}
+								}
+							}
+						}
+
+						if (newCurrentItems.Count == 0 || isProcessingComplete)
+						{
+							break;
+						}
+
+						currentItems = newCurrentItems;
+					}
+
+					if (entityItemsToMove.Count > 0)
+					{
+						foreach (var entitiesToMove in entityItemsToMove)
+						{
+							foreach (var entityToMove in entitiesToMove)
+							{
+								entities.Remove(entityToMove);
+
+								if (entityToMove is Robot r)
+								{
+									entities.Add(new Robot(new Position(r.Position.X, r.Position.Y + 1)));
+								}
+								else if (entityToMove is Box b)
+								{
+									entities.Add(new Box(
+										new Position(b.LeftPosition.X, b.LeftPosition.Y + 1),
+										new Position(b.RightPosition.X, b.RightPosition.Y + 1)));
+								}
+							}
+						}
+					}
 				}
 				else
 				{
+					var entitiesToMove = new List<Entity>();
 					var currentItem = robot;
 
 					while (true)
@@ -247,8 +445,7 @@ public static class SolutionDay15
 						entitiesToMove.Add(currentItem);
 						var currentItemPosition = currentItem is Robot r ?
 							r.Position :
-							currentItem is Box b ?
-								b.RightPosition : (currentItem as Wall)!.Position;
+							(currentItem as Box)!.LeftPosition;
 
 						var nextItem = entities.SingleOrDefault(e =>
 							(e is Box b && b.RightPosition.X == currentItemPosition.X - 1 && b.LeftPosition.Y == currentItemPosition.Y) ||
