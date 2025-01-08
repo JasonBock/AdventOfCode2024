@@ -27,7 +27,7 @@ public static class SolutionDay16Tests
 			###############
 			""";
 
-		Assert.That(SolutionDay16.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(new BigInteger(7036)));
+		Assert.That(SolutionDay16.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(7_036L));
 	}
 
 	[Test]
@@ -54,6 +54,6 @@ public static class SolutionDay16Tests
 			#################
 			""";
 
-		Assert.That(SolutionDay16.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(new BigInteger(11048)));
+		Assert.That(SolutionDay16.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(11_048L));
 	}
 }

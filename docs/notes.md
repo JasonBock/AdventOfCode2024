@@ -343,6 +343,23 @@ Horizontal Clumps: 94, 197, 300,
 [][]
 @
 
+## Day 16
+
+### Part 1
+
+Need to create a `Path`, which contains a list of the number of traversed positions, the number of turns, the current position, the current direction, the current cost, and a flag signaling if the path has completed. Have a method called `GetNextPaths()`, which returns an `ImmutableArray<Path>`. 
+
+We have a list of `Path`s to evaluate. In a `while` loop, once we no longer have paths to evaluate, we break out.
+
+We go through each path. We check to see if this is equal to or higher than the current lowest score. If it's not, we call `GetNextPaths()`. This will return 0 to 3 paths. Each new path is evaluated for either finishing or what its current score is. If it finishes, and it's lower than the current lowest score, we set that. The remaining new paths are evaluated equal to or higher than the current lowest score, and discared if they are equal or higher. Finished paths are discarded.
+
+To find a new path, we look in each direction other than the one 180o from where we are going (e.g. if we're going `North`, we don't look `South`). If there is not a wall in that direction, we create a new `Path`:
+* Incrementing the number of traversed positions
+* Ipdating the current position
+* If we change direction, we increment the number of turns
+* We set the current direction.
+* We update the cost.
+* If the new position is the end, we also signal that we've finished.
 
 # TODOs
 * Day 1
