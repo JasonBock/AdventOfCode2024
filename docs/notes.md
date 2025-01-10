@@ -347,7 +347,7 @@ Horizontal Clumps: 94, 197, 300,
 
 ### Part 1
 
-Need to create a `Path`, which contains a list of the number of traversed positions, the number of turns, the current position, the current direction, the current cost, and a flag signaling if the path has completed. Have a method called `GetNextPaths()`, which returns an `ImmutableArray<Path>`. 
+Need to create a `Path`, which contains the number of traversed positions, the number of turns, the current position, the current direction, the current cost, and a flag signaling if the path has completed. Have a method called `GetNextPaths()`, which returns an `ImmutableArray<Path>`. 
 
 We have a list of `Path`s to evaluate. In a `while` loop, once we no longer have paths to evaluate, we break out.
 
@@ -355,11 +355,42 @@ We go through each path. We check to see if this is equal to or higher than the 
 
 To find a new path, we look in each direction other than the one 180o from where we are going (e.g. if we're going `North`, we don't look `South`). If there is not a wall in that direction, we create a new `Path`:
 * Incrementing the number of traversed positions
-* Ipdating the current position
+* Updating the current position
 * If we change direction, we increment the number of turns
 * We set the current direction.
 * We update the cost.
 * If the new position is the end, we also signal that we've finished.
+
+More ideas:
+
+Maybe we change `Map` to `ImmutableDictionary<Position, MapItemType>`. Because we're going to do so many search on where things are (or aren't), using that as the key may speed things up.
+
+`public enum MapItemType { Start, End, Wall }`
+
+We also keep a list of previous junction visits: what the position is, what the direction is, and what the cost is. Call it a `Junction`. This is "global" for the entire search, just like the map is, but it's dynamic (probably a `HashSet<Junction>`). 
+
+When we search in a direction, we want to find in that direction (incrementally) either
+  * An existing `Junction` **where we are and in that direction** that is equal to or less than our cost. Just stop processing.
+  * A `MapItem`
+  * A junction - that is, there's another opening 90o in either direction.
+
+We either end up:
+* In a dead end. In that case, no new `Path`s are created. 
+  * Idea: we **could** create a list of "dead end" `Junction`s. That is, a `Path` keeps a list of `Junction`s found that only went one way and required a turn (e.g. I was going North and then I could only go West). Not sure how helpful this would be though.
+* At the end. We return a `Path` that is updated with new info and `IsFinished` is `true`.
+* At the start. Probably unlikely, but that's the same as hitting a wall, and we should terminate that path.
+* At a junction. We create new `Junction`s. For each `Junction`, we determine if any exist that are at the same position and direction. If so, and an existing one is less than or equal to our cost, we don't create a `Path` for that `Junction`. Otherwise, we create a new `Path` where **we do not move ahead**, but we calculate the moves it took to get there, and also add a turn if is needed for that new direction. We also add that `Junction` to the global list.
+
+We should keep track of all the `Junction`s that we've visited. If we ever hit a visited `Junction`s position, we immediately stop that `Path`. Doesn't matter which direction we were going there. 
+
+
+
+* It is possible to return to the start. In the big map, it's not too big of a deal, because you'll end up going in to a dead-end rather quickly. But we can stop those paths from continuing if we do run into that case.
+* Only return from `GetNextPaths()` when we've hit a position going in our direction that has an opening to the "left" or "right" (depending on what direction we're going). That way, when we're going down a hall, we don't keep creating just one path to iterate over. We only return new paths when we've either hit that fork, or we dead-end, or we finish. But that should minimize iterating over `GetNextPaths()` a bit.
+* When we create new paths, mark what our cost is to get to that position. If another path hits that, we could potentially cut that path off from continuing if we know we're going to 
+
+
+Any time we find a junction - that is, we can go more than one direction - 
 
 # TODOs
 * Day 1

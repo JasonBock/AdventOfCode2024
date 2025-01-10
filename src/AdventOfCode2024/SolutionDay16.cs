@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Numerics;
-using Map = System.Collections.Immutable.ImmutableArray<AdventOfCode2024.Day16.MapItem>;
+using Map = System.Collections.Immutable.ImmutableDictionary<AdventOfCode2024.Day16.Position, AdventOfCode2024.Day16.MapItemType>;
 
 namespace AdventOfCode2024.Day16;
 
@@ -16,15 +16,14 @@ public static class SolutionDay16
 
 		var minimalCost = long.MaxValue;
 
-		var startLocation = map.Single(_ => _.Type == SolutionDay16.Start);
-		var startPath = new Path(map, 0, 0, startLocation.Position, Direction.East, false);
+		var startLocation = map.Single(_ => _.Value == MapItemType.Start);
+		var startPath = new Path(map, 0, 0, startLocation.Key,
+			Direction.East, false, []);
 
 		var pathsToEvaluate = new List<Path>() { startPath };
 
 		while (pathsToEvaluate.Count > 0)
 		{
-			Console.WriteLine(
-				$"Current Path Evaluation Count: {pathsToEvaluate.Count}, Longest Path: {pathsToEvaluate.MaxBy(_ => _.TraversedPositionCount)!.TraversedPositionCount}");
 			var newPaths = new List<Path>();
 
 			foreach (var pathToEvaluate in pathsToEvaluate)
@@ -51,7 +50,7 @@ public static class SolutionDay16
 
 	private static Map ParseInput(ImmutableArray<string> input)
 	{
-		var mapItems = new List<MapItem>();
+		var mapItems = new Dictionary<Position, MapItemType>();
 
 		for (var y = 0; y < input.Length; y++)
 		{
@@ -63,97 +62,310 @@ public static class SolutionDay16
 
 				if (mapType == Start || mapType == End || mapType == Wall)
 				{
-					mapItems.Add(new MapItem(mapType, new Position(x, y)));
+					mapItems.Add(new Position(x, y),
+						mapType switch
+						{
+							Start => MapItemType.Start,
+							End => MapItemType.End,
+							Wall => MapItemType.Wall,
+							_ => throw new NotSupportedException()
+						});
 				}
 			}
 		}
 
-		return [.. mapItems];
+		return mapItems.ToImmutableDictionary();
 	}
 }
 
 public enum Direction { West, North, East, South }
 
 public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns,
-	Position CurrentPosition, Direction CurrentDirection, bool IsFinished)
+	Position CurrentPosition, Direction CurrentDirection, bool IsFinished,
+	ImmutableHashSet<Position> VisitedJunctions)
 {
 	public ImmutableArray<Path> GetNextPaths()
 	{
 		var newPaths = new List<Path>();
 
-		if (this.CurrentDirection != Direction.West)
+		if (this.CurrentDirection == Direction.East)
 		{
-			// Look East
-			var nextMapItem = this.Map.SingleOrDefault(
-				_ => _.Position.X == this.CurrentPosition.X + 1 && _.Position.Y == this.CurrentPosition.Y);
+			// East
+			var nextPosition = this.CurrentPosition with { X = this.CurrentPosition.X + 1 };
+			var nextPositionCount = 1;
 
-			if (nextMapItem is null || (nextMapItem.Type != SolutionDay16.Wall && nextMapItem.Type == SolutionDay16.End))
+			while (true)
 			{
-				newPaths.Add(this with
+				var foundMapItem = false;
+
+				if (this.Map.TryGetValue(nextPosition, out var nextMapItem))
 				{
-					TraversedPositionCount = this.TraversedPositionCount + 1,
-					NumberOfTurns = this.CurrentDirection != Direction.East ? this.NumberOfTurns + 1 : this.NumberOfTurns,
-					CurrentPosition = this.CurrentPosition with { X = this.CurrentPosition.X + 1 },
-					CurrentDirection = Direction.East,
-					IsFinished = nextMapItem is not null
-				});
+					if (nextMapItem == MapItemType.End)
+					{
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.East,
+							IsFinished = true
+						});
+
+						break;
+					}
+
+					foundMapItem = true;
+				}
+
+				// look for paths North and South
+				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.North,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y + 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.South,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (foundMapItem)
+				{
+					break;
+				}
+
+				nextPosition = nextPosition with { X = nextPosition.X + 1 };
+				nextPositionCount++;
 			}
 		}
-
-		if (this.CurrentDirection != Direction.North)
+		else if (this.CurrentDirection == Direction.South)
 		{
-			// Look South
-			var nextMapItem = this.Map.SingleOrDefault(
-				_ => _.Position.X == this.CurrentPosition.X && _.Position.Y == this.CurrentPosition.Y + 1);
+			// South
+			var nextPosition = this.CurrentPosition with { Y = this.CurrentPosition.Y + 1 };
+			var nextPositionCount = 1;
 
-			if (nextMapItem is null || (nextMapItem.Type != SolutionDay16.Wall && nextMapItem.Type == SolutionDay16.End))
+			while (true)
 			{
-				newPaths.Add(this with
+				var foundMapItem = false;
+
+				if (this.Map.ContainsKey(nextPosition))
 				{
-					TraversedPositionCount = this.TraversedPositionCount + 1,
-					NumberOfTurns = this.CurrentDirection != Direction.South ? this.NumberOfTurns + 1 : this.NumberOfTurns,
-					CurrentPosition = this.CurrentPosition with { Y = this.CurrentPosition.Y + 1 },
-					CurrentDirection = Direction.South,
-					IsFinished = nextMapItem is not null
-				});
+					// We'll never hit the end going South,
+					// so we don't need to check for that.
+					foundMapItem = true;
+				}
+
+				// look for paths East and West
+				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.East,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X - 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.West,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (foundMapItem)
+				{
+					break;
+				}
+
+				nextPosition = nextPosition with { Y = nextPosition.Y + 1 };
+				nextPositionCount++;
 			}
 		}
-
-		if (this.CurrentDirection != Direction.East)
+		else if (this.CurrentDirection == Direction.West)
 		{
-			// Look West
-			var nextMapItem = this.Map.SingleOrDefault(
-				_ => _.Position.X == this.CurrentPosition.X - 1 && _.Position.Y == this.CurrentPosition.Y);
+			// West
+			var nextPosition = this.CurrentPosition with { X = this.CurrentPosition.X - 1 };
+			var nextPositionCount = 1;
 
-			if (nextMapItem is null || (nextMapItem.Type != SolutionDay16.Wall && nextMapItem.Type == SolutionDay16.End))
+			while (true)
 			{
-				newPaths.Add(this with
+				var foundMapItem = false;
+
+				if (this.Map.ContainsKey(nextPosition))
 				{
-					TraversedPositionCount = this.TraversedPositionCount + 1,
-					NumberOfTurns = this.CurrentDirection != Direction.West ? this.NumberOfTurns + 1 : this.NumberOfTurns,
-					CurrentPosition = this.CurrentPosition with { X = this.CurrentPosition.X - 1 },
-					CurrentDirection = Direction.West,
-					IsFinished = nextMapItem is not null
-				});
+					// We'll never hit the end going West,
+					// so we don't need to check for that.
+					foundMapItem = true;
+				}
+
+				// look for paths North and South
+				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.North,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y + 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.South,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (foundMapItem)
+				{
+					break;
+				}
+
+				nextPosition = nextPosition with { X = nextPosition.X - 1 };
+				nextPositionCount++;
 			}
 		}
-
-		if (this.CurrentDirection != Direction.South)
+		else
 		{
-			// Look North
-			var nextMapItem = this.Map.SingleOrDefault(
-				_ => _.Position.X == this.CurrentPosition.X && _.Position.Y == this.CurrentPosition.Y - 1);
+			// North
+			var nextPosition = this.CurrentPosition with { Y = this.CurrentPosition.Y - 1 };
+			var nextPositionCount = 1;
 
-			if (nextMapItem is null || (nextMapItem.Type != SolutionDay16.Wall && nextMapItem.Type == SolutionDay16.End))
+			while (true)
 			{
-				newPaths.Add(this with
+				var foundMapItem = false;
+
+				if (this.Map.TryGetValue(nextPosition, out var nextMapItem))
 				{
-					TraversedPositionCount = this.TraversedPositionCount + 1,
-					NumberOfTurns = this.CurrentDirection != Direction.North ? this.NumberOfTurns + 1 : this.NumberOfTurns,
-					CurrentPosition = this.CurrentPosition with { Y = this.CurrentPosition.Y - 1 },
-					CurrentDirection = Direction.North,
-					IsFinished = nextMapItem is not null
-				});
+					if (nextMapItem == MapItemType.End)
+					{
+						this.VisitedJunctions.Contains(nextPosition);
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.North,
+							IsFinished = true
+						});
+
+						break;
+					}
+
+					foundMapItem = true;
+				}
+
+				// look for paths East and West
+				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.East,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X - 1 }))
+				{
+					if (!this.VisitedJunctions.Contains(nextPosition))
+					{
+						foundMapItem = true;
+
+						newPaths.Add(this with
+						{
+							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+							NumberOfTurns = this.NumberOfTurns + 1,
+							CurrentPosition = nextPosition,
+							CurrentDirection = Direction.West,
+							IsFinished = false
+						});
+					}
+				}
+
+				if (foundMapItem)
+				{
+					break;
+				}
+
+				nextPosition = nextPosition with { Y = nextPosition.Y - 1 };
+				nextPositionCount++;
 			}
 		}
 
@@ -163,6 +375,7 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 	public long CurrentCost => this.TraversedPositionCount + (1_000L * this.NumberOfTurns);
 }
 
+public enum MapItemType { Start, End, Wall }
 public sealed record Position(int X, int Y);
-public sealed record MapItem(char Type, Position Position);
+public sealed record MapItem(MapItemType Type, Position Position);
 public sealed record Reindeer(Direction CurrentDirection, Position Position);
