@@ -25,6 +25,7 @@ public static class SolutionDay16
 
 		while (pathsToEvaluate.Count > 0)
 		{
+			Console.WriteLine(pathsToEvaluate.Count);
 			var newPaths = new List<Path>();
 
 			foreach (var pathToEvaluate in pathsToEvaluate)
@@ -42,8 +43,34 @@ public static class SolutionDay16
 					newPaths.AddRange(nextPaths.Where(_ => !_.IsFinished && _.CurrentCost < minimalCost));
 				}
 			}
-			
-			// TODO: We need to do some pruning.
+
+			// We need to do some pruning.
+			for (var i = 0; i < newPaths.Count; i++)
+			{
+				var firstPath = newPaths[i];
+				var firstPathLastJunction = firstPath.VisitedJunctions[^1];
+
+				var existingPaths = newPaths.Where(_ => _ != firstPath &&
+					_.VisitedJunctions.Contains(firstPathLastJunction)).ToArray();
+
+				for (var e = 0; e < existingPaths.Length; e++)
+				{
+					var existingPath = existingPaths[e];
+					var existingPathJunction = existingPath.VisitedJunctions.Single(_ => _ == firstPathLastJunction);
+
+					if (firstPathLastJunction.Cost >= existingPathJunction.Cost)
+					{
+						newPaths.RemoveAt(i);
+						i--;
+						continue;
+					}
+					else
+					{
+						newPaths.Remove(existingPath);
+					}
+				}
+			}
+
 			pathsToEvaluate = newPaths;
 		}
 
@@ -84,7 +111,7 @@ public enum Direction { West, North, East, South }
 
 public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns,
 	Position CurrentPosition, Direction CurrentDirection, bool IsFinished,
-	ImmutableHashSet<Position> VisitedJunctions)
+	ImmutableArray<Junction> VisitedJunctions)
 {
 	public ImmutableArray<Path> GetNextPaths()
 	{
@@ -106,7 +133,9 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.East,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns,
 							CurrentPosition = nextPosition,
@@ -123,11 +152,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				// look for paths North, South, and maybe East
 				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.North,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -139,11 +170,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y + 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.South,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -157,11 +190,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
 					{
-						if (!this.VisitedJunctions.Contains(nextPosition))
+						if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 						{
 							newPaths.Add(this with
 							{
-								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								VisitedJunctions = this.VisitedJunctions.Add(
+									new(nextPosition, Direction.East,
+										this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns)),
 								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 								NumberOfTurns = this.NumberOfTurns,
 								CurrentPosition = nextPosition,
@@ -172,7 +207,7 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (newPaths.Count > 0)
+				if ((foundWall && newPaths.Count == 0) || (!foundWall && newPaths.Count > 0))
 				{
 					break;
 				}
@@ -207,11 +242,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				// look for paths East, West, and maybe South
 				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.East,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -223,11 +260,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X - 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.West,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -241,11 +280,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y + 1 }))
 					{
-						if (!this.VisitedJunctions.Contains(nextPosition))
+						if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 						{
 							newPaths.Add(this with
 							{
-								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								VisitedJunctions = this.VisitedJunctions.Add(
+									new(nextPosition, Direction.South,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns)),
 								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 								NumberOfTurns = this.NumberOfTurns,
 								CurrentPosition = nextPosition,
@@ -256,7 +297,7 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (newPaths.Count > 0)
+				if ((foundWall && newPaths.Count == 0) || (!foundWall && newPaths.Count > 0))
 				{
 					break;
 				}
@@ -291,11 +332,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				// look for paths North, South, and maybe West
 				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.North,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -307,11 +350,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y + 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.South,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -325,11 +370,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X - 1 }))
 					{
-						if (!this.VisitedJunctions.Contains(nextPosition))
+						if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 						{
 							newPaths.Add(this with
 							{
-								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								VisitedJunctions = this.VisitedJunctions.Add(
+									new(nextPosition, Direction.West,
+										this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns)),
 								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 								NumberOfTurns = this.NumberOfTurns,
 								CurrentPosition = nextPosition,
@@ -340,7 +387,7 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (newPaths.Count > 0)
+				if ((foundWall && newPaths.Count == 0) || (!foundWall && newPaths.Count > 0))
 				{
 					break;
 				}
@@ -363,11 +410,11 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (nextMapItem == MapItemType.End)
 					{
-						this.VisitedJunctions.Contains(nextPosition);
-
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.North,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns,
 							CurrentPosition = nextPosition,
@@ -384,11 +431,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				// look for paths East, West, and maybe North
 				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.East,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -400,11 +449,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X - 1 }))
 				{
-					if (!this.VisitedJunctions.Contains(nextPosition))
+					if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 					{
 						newPaths.Add(this with
 						{
-							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+							VisitedJunctions = this.VisitedJunctions.Add(
+								new(nextPosition, Direction.West,
+									this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns + 1)),
 							TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 							NumberOfTurns = this.NumberOfTurns + 1,
 							CurrentPosition = nextPosition,
@@ -418,11 +469,13 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
 					{
-						if (!this.VisitedJunctions.Contains(nextPosition))
+						if (!this.VisitedJunctions.Any(_ => _.Position == nextPosition))
 						{
 							newPaths.Add(this with
 							{
-								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								VisitedJunctions = this.VisitedJunctions.Add(
+									new(nextPosition, Direction.North,
+										this.TraversedPositionCount + nextPositionCount, this.NumberOfTurns)),
 								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
 								NumberOfTurns = this.NumberOfTurns,
 								CurrentPosition = nextPosition,
@@ -433,7 +486,7 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (newPaths.Count > 0)
+				if ((foundWall && newPaths.Count == 0) || (!foundWall && newPaths.Count > 0))
 				{
 					break;
 				}
@@ -451,5 +504,10 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 public enum MapItemType { Start, End, Wall }
 public sealed record Position(int X, int Y);
+public sealed record Junction(Position Position, Direction Direction,
+	int TraversedPositionCount, int NumberOfTurns)
+{
+	public long Cost => this.TraversedPositionCount + (1_000L * this.NumberOfTurns);
+}
+
 public sealed record MapItem(MapItemType Type, Position Position);
-public sealed record Reindeer(Direction CurrentDirection, Position Position);
