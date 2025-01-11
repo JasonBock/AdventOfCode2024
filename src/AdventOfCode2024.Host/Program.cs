@@ -6,6 +6,7 @@ using AdventOfCode2024.Day13;
 using AdventOfCode2024.Day14;
 using AdventOfCode2024.Day15;
 using AdventOfCode2024.Day16;
+using AdventOfCode2024.Day17;
 using AdventOfCode2024.Day2;
 using AdventOfCode2024.Day3;
 using AdventOfCode2024.Day4;
@@ -30,7 +31,8 @@ using AdventOfCode2024.Day9;
 //RunDay13();
 //RunDay14();
 //RunDay15();
-RunDay16();
+//RunDay16();
+RunDay17();
 
 static void RunDay1()
 {
@@ -141,4 +143,10 @@ static void RunDay16()
 {
 	Console.WriteLine(nameof(RunDay16));
 	Console.WriteLine($"Part 1 = {SolutionDay16.RunPart1([.. File.ReadAllLines("Day16Input.txt")])}");
+}
+
+static void RunDay17()
+{
+	Console.WriteLine(nameof(RunDay17));
+	Console.WriteLine($"Part 1 = {SolutionDay17.RunPart1([.. File.ReadAllLines("Day17Input.txt")])}");
 }

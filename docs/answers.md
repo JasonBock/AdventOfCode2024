@@ -66,7 +66,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 
 # Day 17
-
+6,5,7,4,5,7,3,1,0
 
 # Day 18
 
