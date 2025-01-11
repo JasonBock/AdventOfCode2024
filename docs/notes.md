@@ -363,9 +363,9 @@ To find a new path, we look in each direction other than the one 180o from where
 
 More ideas:
 
-Maybe we change `Map` to `ImmutableDictionary<Position, MapItemType>`. Because we're going to do so many search on where things are (or aren't), using that as the key may speed things up.
+DONE - Maybe we change `Map` to `ImmutableDictionary<Position, MapItemType>`. Because we're going to do so many search on where things are (or aren't), using that as the key may speed things up.
 
-`public enum MapItemType { Start, End, Wall }`
+DONE - `public enum MapItemType { Start, End, Wall }`
 
 We also keep a list of previous junction visits: what the position is, what the direction is, and what the cost is. Call it a `Junction`. This is "global" for the entire search, just like the map is, but it's dynamic (probably a `HashSet<Junction>`). 
 
@@ -391,6 +391,12 @@ We should keep track of all the `Junction`s that we've visited. If we ever hit a
 
 
 Any time we find a junction - that is, we can go more than one direction - 
+
+9223372036854775807
+9223372036854775807
+
+* We need to create start paths, **plural**. You could go East and/or North. Or technically neither, but that would suck.
+* If we end with the cost equaling `long.MaxValue`, that means the map doesn't let you finish. Maybe throw an exception - `BlockedMapException`.
 
 # TODOs
 * Day 1

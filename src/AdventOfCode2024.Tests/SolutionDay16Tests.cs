@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System.Numerics;
 
 namespace AdventOfCode2024.Day16.Tests;
 

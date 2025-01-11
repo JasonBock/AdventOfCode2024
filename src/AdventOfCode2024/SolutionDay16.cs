@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Numerics;
 using Map = System.Collections.Immutable.ImmutableDictionary<AdventOfCode2024.Day16.Position, AdventOfCode2024.Day16.MapItemType>;
 
 namespace AdventOfCode2024.Day16;
@@ -17,10 +16,12 @@ public static class SolutionDay16
 		var minimalCost = long.MaxValue;
 
 		var startLocation = map.Single(_ => _.Value == MapItemType.Start);
-		var startPath = new Path(map, 0, 0, startLocation.Key,
-			Direction.East, false, []);
 
-		var pathsToEvaluate = new List<Path>() { startPath };
+		var pathsToEvaluate = new List<Path>()
+		{
+			new(map, 0, 0, startLocation.Key, Direction.East, false, []),
+			new(map, 0, 1, startLocation.Key, Direction.North, false, []),
+		};
 
 		while (pathsToEvaluate.Count > 0)
 		{
@@ -41,7 +42,8 @@ public static class SolutionDay16
 					newPaths.AddRange(nextPaths.Where(_ => !_.IsFinished && _.CurrentCost < minimalCost));
 				}
 			}
-
+			
+			// TODO: We need to do some pruning.
 			pathsToEvaluate = newPaths;
 		}
 
@@ -96,7 +98,7 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 			while (true)
 			{
-				var foundMapItem = false;
+				var foundWall = false;
 
 				if (this.Map.TryGetValue(nextPosition, out var nextMapItem))
 				{
@@ -115,16 +117,14 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 						break;
 					}
 
-					foundMapItem = true;
+					foundWall = true;
 				}
 
-				// look for paths North and South
+				// look for paths North, South, and maybe East
 				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -141,8 +141,6 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -155,7 +153,26 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (foundMapItem)
+				if (!foundWall && newPaths.Count > 0)
+				{
+					if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
+					{
+						if (!this.VisitedJunctions.Contains(nextPosition))
+						{
+							newPaths.Add(this with
+							{
+								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+								NumberOfTurns = this.NumberOfTurns,
+								CurrentPosition = nextPosition,
+								CurrentDirection = Direction.East,
+								IsFinished = false
+							});
+						}
+					}
+				}
+
+				if (newPaths.Count > 0)
 				{
 					break;
 				}
@@ -172,22 +189,26 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 			while (true)
 			{
-				var foundMapItem = false;
+				var foundWall = false;
 
-				if (this.Map.ContainsKey(nextPosition))
+				if (this.Map.TryGetValue(nextPosition, out var nextMapItem))
 				{
 					// We'll never hit the end going South,
-					// so we don't need to check for that.
-					foundMapItem = true;
+					// so we don't need to check for that,
+					// but...I guess it's possible to hit the start.
+					if (nextMapItem == MapItemType.Start)
+					{
+						break;
+					}
+
+					foundWall = true;
 				}
 
-				// look for paths East and West
+				// look for paths East, West, and maybe South
 				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -204,8 +225,6 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -218,7 +237,26 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (foundMapItem)
+				if (!foundWall && newPaths.Count > 0)
+				{
+					if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y + 1 }))
+					{
+						if (!this.VisitedJunctions.Contains(nextPosition))
+						{
+							newPaths.Add(this with
+							{
+								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+								NumberOfTurns = this.NumberOfTurns,
+								CurrentPosition = nextPosition,
+								CurrentDirection = Direction.South,
+								IsFinished = false
+							});
+						}
+					}
+				}
+
+				if (newPaths.Count > 0)
 				{
 					break;
 				}
@@ -235,22 +273,26 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 			while (true)
 			{
-				var foundMapItem = false;
+				var foundWall = false;
 
-				if (this.Map.ContainsKey(nextPosition))
+				if (this.Map.TryGetValue(nextPosition, out var nextMapItem))
 				{
 					// We'll never hit the end going West,
-					// so we don't need to check for that.
-					foundMapItem = true;
+					// so we don't need to check for that,
+					// but...I guess it's possible to hit the start.
+					if (nextMapItem == MapItemType.Start)
+					{
+						break;
+					}
+
+					foundWall = true;
 				}
 
-				// look for paths North and South
+				// look for paths North, South, and maybe West
 				if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -267,8 +309,6 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -281,7 +321,26 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (foundMapItem)
+				if (!foundWall && newPaths.Count > 0)
+				{
+					if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X - 1 }))
+					{
+						if (!this.VisitedJunctions.Contains(nextPosition))
+						{
+							newPaths.Add(this with
+							{
+								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+								NumberOfTurns = this.NumberOfTurns,
+								CurrentPosition = nextPosition,
+								CurrentDirection = Direction.West,
+								IsFinished = false
+							});
+						}
+					}
+				}
+
+				if (newPaths.Count > 0)
 				{
 					break;
 				}
@@ -298,7 +357,7 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 
 			while (true)
 			{
-				var foundMapItem = false;
+				var foundWall = false;
 
 				if (this.Map.TryGetValue(nextPosition, out var nextMapItem))
 				{
@@ -319,16 +378,14 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 						break;
 					}
 
-					foundMapItem = true;
+					foundWall = true;
 				}
 
-				// look for paths East and West
+				// look for paths East, West, and maybe North
 				if (!this.Map.ContainsKey(nextPosition with { X = nextPosition.X + 1 }))
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -345,8 +402,6 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 				{
 					if (!this.VisitedJunctions.Contains(nextPosition))
 					{
-						foundMapItem = true;
-
 						newPaths.Add(this with
 						{
 							VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
@@ -359,7 +414,26 @@ public sealed record Path(Map Map, int TraversedPositionCount, int NumberOfTurns
 					}
 				}
 
-				if (foundMapItem)
+				if (!foundWall && newPaths.Count > 0)
+				{
+					if (!this.Map.ContainsKey(nextPosition with { Y = nextPosition.Y - 1 }))
+					{
+						if (!this.VisitedJunctions.Contains(nextPosition))
+						{
+							newPaths.Add(this with
+							{
+								VisitedJunctions = this.VisitedJunctions.Add(nextPosition),
+								TraversedPositionCount = this.TraversedPositionCount + nextPositionCount,
+								NumberOfTurns = this.NumberOfTurns,
+								CurrentPosition = nextPosition,
+								CurrentDirection = Direction.North,
+								IsFinished = false
+							});
+						}
+					}
+				}
+
+				if (newPaths.Count > 0)
 				{
 					break;
 				}
