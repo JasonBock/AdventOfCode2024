@@ -63,10 +63,13 @@ These are the answers. Stop reading right now if you don't want to see them.
 1492011
 
 # Day 16
-
+92432
 
 # Day 17
 6,5,7,4,5,7,3,1,0
+2400000000 (too low)
+
+4294967295 (???)
 
 # Day 18
 

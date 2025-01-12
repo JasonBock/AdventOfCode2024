@@ -398,6 +398,74 @@ Any time we find a junction - that is, we can go more than one direction -
 * We need to create start paths, **plural**. You could go East and/or North. Or technically neither, but that would suck.
 * If we end with the cost equaling `long.MaxValue`, that means the map doesn't let you finish. Maybe throw an exception - `BlockedMapException`.
 
+As we're evaluating new paths, we only add a new path to `newPaths` if:
+
+If a new path's `CurrentPosition` is in another's `VisitedJunction`s:
+* With the cost at that junction equal to or greater than, we don't add the new path. 
+* Else, we removing the existing path.
+
+So we have to add the cost and the direction when we hit a junction
+
+## Day 17
+
+### Part 2
+
+2,4,1,5,7,5,0,3,1,6,4,3,5,5,3,0
+
+Find X
+
+2,4 => 
+  A = X
+  B = X % 8
+  C = 0
+  R = []
+1,5 => 
+  A = X
+  B = (X % 8) XOR 5
+  C = 0
+  R = []
+7,5 => 
+  A = X
+  B = (X % 8) XOR 5
+  C = (X / (2 ^ ((X % 8) XOR 5)))
+  R = []
+0,3 => 
+  A = X
+  B = (X % 8) XOR 5
+  C = (X / (2 ^ ((X % 8) XOR 5)))
+  R = []
+1,6 => 
+  A = (X / (2 ^ (X / (2 ^ ((X % 8) XOR 5)))))
+  B = (X % 8) XOR 5
+  C = (X / (2 ^ ((X % 8) XOR 5)))
+  R = []
+4,3 => 
+  A = (X / (2 ^ (X / (2 ^ ((X % 8) XOR 5)))))
+  B = ((X % 8) XOR 5) XOR (X / (2 ^ ((X % 8) XOR 5)))
+  C = (X / (2 ^ ((X % 8) XOR 5)))
+  R = []
+5,5 => 
+  A = (X / (2 ^ (X / (2 ^ ((X % 8) XOR 5)))))
+  B = ((X % 8) XOR 5) XOR (X / (2 ^ ((X % 8) XOR 5)))
+  C = (X / (2 ^ ((X % 8) XOR 5)))
+  R = [((X % 8) XOR 5) XOR (X / (2 ^ ((X % 8) XOR 5))) % 8]
+3,0 => 
+  A = (X / (2 ^ (X / (2 ^ ((X % 8) XOR 5)))))
+  B = ((X % 8) XOR 5) XOR (X / (2 ^ ((X % 8) XOR 5)))
+  C = (X / (2 ^ ((X % 8) XOR 5)))
+  R = [((X % 8) XOR 5) XOR (X / (2 ^ ((X % 8) XOR 5))) % 8], jump to the beginning
+
+2,4 => 
+
+We need this to run through 16 times, but then the last "3,0" instruction needs A = 0.
+
+16 * 8 = 128 maximum. Any more would print out too much.
+
+ 35_000_000_000_000 => 120 executions
+300_000_000_000_000 => 136 executions
+
+35_184_372_088_832, this is the first number that does 128 executions
+
 # TODOs
 * Day 1
     * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`

@@ -23,9 +23,37 @@ public static class SolutionDay17
 		return computer.Output;
 	}
 
-	//public static BigInteger RunPart2(ImmutableArray<string> input)
-	//{
-	//}
+	public static BigInteger RunPart2(ImmutableArray<string> input)
+	{
+		var registerB = BigInteger.Parse(input[1].Split(':')[1].Trim(), CultureInfo.CurrentCulture);
+		var registerC = BigInteger.Parse(input[2].Split(':')[1].Trim(), CultureInfo.CurrentCulture);
+
+		var program = input[4].Split(':')[1].Trim().Split(',')
+			.Select(_ => BigInteger.Parse(_, CultureInfo.CurrentCulture)).ToImmutableArray();
+
+		var targetResult = string.Join(',', program);
+		var i = new BigInteger(281_474_976_710_655);
+
+		while(true)
+		{
+			var registerA = i;
+
+			var computerInput = new ComputerInput(registerA, registerB, registerC, program);
+
+			var computer = new Computer(computerInput);
+
+			if (computer.Output == targetResult)
+			{
+				break;
+			}
+
+			i -= 7L;
+
+			Console.WriteLine(i);
+		}
+
+		return i;
+	}
 }
 
 public sealed record ComputerInput(BigInteger RegisterA, BigInteger RegisterB, BigInteger RegisterC,
@@ -85,20 +113,24 @@ public sealed class Computer
 			var operand = this.Program[this.InstructionPointer + 1];
 			var didJump = false;
 
+			// 0
 			if (opcode == Computer.Instructions.Adv)
 			{
 				var (quotient, _) = BigInteger.DivRem(
 					this.RegisterA, BigInteger.Pow(2, (int)this.GetComboOperand(operand)));
 				this.RegisterA = quotient;
 			}
+			// 1
 			else if (opcode == Computer.Instructions.Bxl)
 			{
 				this.RegisterB ^= operand;
 			}
+			// 2
 			else if (opcode == Computer.Instructions.Bst)
 			{
 				this.RegisterB = this.GetComboOperand(operand) % 8;
 			}
+			// 3
 			else if (opcode == Computer.Instructions.Jnz)
 			{
 				if (this.RegisterA != 0)
@@ -107,20 +139,24 @@ public sealed class Computer
 					didJump = true;
 				}
 			}
+			// 4
 			else if (opcode == Computer.Instructions.Bxc)
 			{
 				this.RegisterB ^= this.RegisterC;
 			}
+			// 5
 			else if (opcode == Computer.Instructions.Out)
 			{
 				result.Add(this.GetComboOperand(operand) % 8);
 			}
+			// 6
 			else if (opcode == Computer.Instructions.Bdv)
 			{
 				var (quotient, _) = BigInteger.DivRem(
 					this.RegisterA, BigInteger.Pow(2, (int)this.GetComboOperand(operand)));
 				this.RegisterB = quotient;
 			}
+			// 7
 			else if (opcode == Computer.Instructions.Cdv)
 			{
 				var (quotient, _) = BigInteger.DivRem(
@@ -136,6 +172,8 @@ public sealed class Computer
 			{
 				this.InstructionPointer += 2;
 			}
+
+			this.ProcessedInstructionCount++;
 		}
 
 		return string.Join(',', result);
@@ -143,6 +181,7 @@ public sealed class Computer
 
 	public int InstructionPointer { get; private set; }
 	public string Output { get; }
+	public int ProcessedInstructionCount { get; private set; }
 	public ImmutableArray<BigInteger> Program { get; }
 	public BigInteger RegisterA { get; private set; }
 	public BigInteger RegisterB { get; private set; }

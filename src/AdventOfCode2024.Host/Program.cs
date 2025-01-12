@@ -31,8 +31,8 @@ using AdventOfCode2024.Day9;
 //RunDay13();
 //RunDay14();
 //RunDay15();
-//RunDay16();
-RunDay17();
+RunDay16();
+//RunDay17();
 
 static void RunDay1()
 {
@@ -148,5 +148,7 @@ static void RunDay16()
 static void RunDay17()
 {
 	Console.WriteLine(nameof(RunDay17));
-	Console.WriteLine($"Part 1 = {SolutionDay17.RunPart1([.. File.ReadAllLines("Day17Input.txt")])}");
+	//Console.WriteLine($"Part 1 = {SolutionDay17.RunPart1([.. File.ReadAllLines("Day17Input.txt")])}");
+	Console.WriteLine("2,4,1,5,7,5,0,3,1,6,4,3,5,5,3,0");
+	Console.WriteLine($"Part 2 = {SolutionDay17.RunPart2([.. File.ReadAllLines("Day17Input.txt")])}");
 }

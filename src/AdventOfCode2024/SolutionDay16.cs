@@ -50,25 +50,40 @@ public static class SolutionDay16
 				var firstPath = newPaths[i];
 				var firstPathLastJunction = firstPath.VisitedJunctions[^1];
 
-				var existingPaths = newPaths.Where(_ => _ != firstPath &&
-					_.VisitedJunctions.Contains(firstPathLastJunction)).ToArray();
-
-				for (var e = 0; e < existingPaths.Length; e++)
+				if (newPaths.Any(_ => _ != firstPath &&
+					_.VisitedJunctions.Any(
+						_ => _.Position == firstPathLastJunction.Position &&
+							_.Direction == firstPathLastJunction.Direction &&
+							_.Cost <= firstPathLastJunction.Cost)))
 				{
-					var existingPath = existingPaths[e];
-					var existingPathJunction = existingPath.VisitedJunctions.Single(_ => _ == firstPathLastJunction);
-
-					if (firstPathLastJunction.Cost >= existingPathJunction.Cost)
-					{
-						newPaths.RemoveAt(i);
-						i--;
-						continue;
-					}
-					else
-					{
-						newPaths.Remove(existingPath);
-					}
+					newPaths.RemoveAt(i);
+					i--;
 				}
+
+				//for (var e = 0; e < existingPaths.Length; e++)
+				//{
+				//	var breakout = false;
+				//	var existingPath = existingPaths[e];
+				//	var existingPathJunction = existingPath.VisitedJunctions.Single(
+				//		_ => _.Position == firstPathLastJunction.Position && _.Direction == firstPathLastJunction.Direction);
+
+				//	if (firstPathLastJunction.Cost >= existingPathJunction.Cost)
+				//	{
+				//		newPaths.RemoveAt(i);
+				//		i--;
+				//		breakout = true;
+				//		continue;
+				//	}
+				//	else
+				//	{
+				//		newPaths.Remove(existingPath);
+				//	}
+
+				//	if (breakout)
+				//	{
+				//		break;
+				//	}
+				//}
 			}
 
 			pathsToEvaluate = newPaths;
