@@ -160,4 +160,5 @@ static void RunDay18()
 {
 	Console.WriteLine(nameof(RunDay18));
 	Console.WriteLine($"Part 1 = {SolutionDay18.RunPart1([.. File.ReadAllLines("Day18Input.txt")], 1_024, 71)}");
+	Console.WriteLine($"Part 2 = {SolutionDay18.RunPart2([.. File.ReadAllLines("Day18Input.txt")], 71)}");
 }

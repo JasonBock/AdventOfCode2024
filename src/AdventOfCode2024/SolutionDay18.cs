@@ -31,6 +31,36 @@ public static class SolutionDay18
 		//return PathFindingUsingBacktracking.findShortestPathLength(maze, [0, 0], [mazeSize - 1, mazeSize - 1]);
 		return PathFindingUsingBFS.BFS(maze, new(0, 0), new(mazeSize - 1, mazeSize - 1));
 	}
+
+	public static string RunPart2(ImmutableArray<string> input, int mazeSize)
+	{
+		var corruptions = new HashSet<Position>();
+
+		for (var i = 0; i < input.Length; i++)
+		{
+			var position = input[i].Split(',');
+			corruptions.Add(new Position(
+				int.Parse(position[0], CultureInfo.CurrentCulture),
+				int.Parse(position[1], CultureInfo.CurrentCulture)));
+
+			var maze = new int[mazeSize, mazeSize];
+
+			for (var x = 0; x < mazeSize; x++)
+			{
+				for (var y = 0; y < mazeSize; y++)
+				{
+					maze[x, y] = corruptions.Contains(new Position(x, y)) ? 0 : 1;
+				}
+			}
+
+			if (PathFindingUsingBFS.BFS(maze, new(0, 0), new(mazeSize - 1, mazeSize - 1)) == -1)
+			{
+				return input[i];
+			}
+		}
+
+		throw new NotSupportedException();
+	}
 }
 
 public sealed record Position(int X, int Y);
@@ -133,11 +163,11 @@ public static class PathFindingUsingBFS
 	//static int ROW = 9;
 	//static int COL = 10;
 
-   // To store matrix cell coordinates
-   public class Point
-   {
-	  public int x;
-	  public int y;
+	// To store matrix cell coordinates
+	public class Point
+	{
+		public int x;
+		public int y;
 
 		public Point(int x, int y)
 		{
@@ -177,7 +207,7 @@ public static class PathFindingUsingBFS
 
 	// function to find the shortest path between
 	// a given source cell to a destination cell.
-	public static int BFS(int[,] matrix, 
+	public static int BFS(int[,] matrix,
 		Point source, Point destination)
 	{
 		ArgumentNullException.ThrowIfNull(matrix);

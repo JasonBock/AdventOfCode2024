@@ -75,6 +75,7 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 18
 260
+24,48
 
 # Day 19
 
