@@ -28,7 +28,6 @@ public static class SolutionDay18
 			}
 		}
 
-		//return PathFindingUsingBacktracking.findShortestPathLength(maze, [0, 0], [mazeSize - 1, mazeSize - 1]);
 		return PathFindingUsingBFS.BFS(maze, new(0, 0), new(mazeSize - 1, mazeSize - 1));
 	}
 
