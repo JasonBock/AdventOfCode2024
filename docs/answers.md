@@ -64,15 +64,17 @@ These are the answers. Stop reading right now if you don't want to see them.
 
 # Day 16
 92432
+433 (too low)
+458
 
 # Day 17
 6,5,7,4,5,7,3,1,0
-2400000000 (too low)
 
-4294967295 (???)
+ 35_184_372_088_832 (minimum too low)
+281_474_976_710_655 (maximum too high)
 
 # Day 18
-
+260
 
 # Day 19
 

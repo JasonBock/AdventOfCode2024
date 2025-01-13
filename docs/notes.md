@@ -464,16 +464,81 @@ We need this to run through 16 times, but then the last "3,0" instruction needs 
  35_000_000_000_000 => 120 executions
 300_000_000_000_000 => 136 executions
 
-35_184_372_088_832, this is the first number that does 128 executions
+ 35_184_372_088_832, this is the first number that does 128 executions
+281_474_976_710_655, this is the last number that does 128 executions
+
+Interesting, (last / first) gives exactly 7. I have no idea if that helps or not :)
+
+Reverse this
+
+  A = < 8
+  B = B
+  C = C
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3]
+2,4 => 
+  A = < 8
+  B = (< 8) % 8
+  C = C
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3]
+1,5 => 
+  A = < 8
+  B = ((< 8) % 8) ^ 5
+  C = C
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3]
+7,5 => 
+  A = < 8
+  B = ((< 8) % 8) % 5
+  C = (< 8) / (2 ^ (((< 8) % 8) ^ 5))
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3]
+0,3 => 
+  A = 0
+  B = ((< 8) % 8) % 5
+  C = (< 8) / (2 ^ (((< 8) % 8) ^ 5))
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3]
+1,6 => 
+  A = 0
+  B = (((< 8) % 8) % 5) ^ 6
+  C = (< 8) / (2 ^ (((< 8) % 8) ^ 5))
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3]
+4,3 =>
+  A = 0
+  B = (((A % 8) % 5) ^ 6) ^ (A / (2 ^ ((A % 8) ^ 5)))
+  C = (< 8) / (2 ^ (((< 8) % 8) ^ 5))
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3]
+5,5 =>
+  A = 0
+  B = ((((< 8) % 8) % 5) ^ 6) ^ ((< 8) / (2 ^ (((< 8) % 8) ^ 5))) (must be a multiple of 8)
+  C = (< 8) / (2 ^ (((< 8) % 8) ^ 5))
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3,0]
+3,0 =>
+  A = 0
+  B = ((((< 8) % 8) % 5) ^ 6) ^ ((< 8) / (2 ^ (((< 8) % 8) ^ 5))) (must be a multiple of 8)
+  C = (< 8) / (2 ^ (((< 8) % 8) ^ 5))
+  R = [2,4,1,5,7,5,0,3,1,6,4,3,5,5,3,0]
+TERMINATION
+
+## Day 18
+
+### Part 1
+
+This feels like cheating, but finding the shortest path between two points is a well-known problem, so...why recreate the wheel?
+
+* https://en.wikipedia.org/wiki/A*_search_algorithm
+* https://www.geeksforgeeks.org/shortest-path-in-a-binary-maze/
+* https://stackoverflow.com/questions/61218945/best-algorithm-for-maze-solving
+
+Don't use backtracking, use BFS. (Of course, duh!)
 
 # TODOs
 * Day 1
-    * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
-    * Part 2 - Should the arrays be sorted, or do something to handle previously discovered IDs?
+  * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
+  * Part 2 - Should the arrays be sorted, or do something to handle previously discovered IDs?
 * Day 3
-    * Can I make the regexs any better, especially for Part 2?
+  * Can I make the regexs any better, especially for Part 2?
 * Day 9
-    * Part 1 - Took a bit of time to finish. Where was the bottleneck?
+  * Part 1 - Took a bit of time to finish. Where was the bottleneck?
 * Day 10
-    * Part 1 - Would be nice if `string` had a `IndexesOf()` - that is, gives you a collection of indexes for a given character. Maybe a Spackle feature?
-    * Part 1 - Parallelization would probably make this quicker.
+  * Part 1 - Would be nice if `string` had a `IndexesOf()` - that is, gives you a collection of indexes for a given character. Maybe a Spackle feature?
+  * Part 1 - Parallelization would probably make this quicker.
+* Day 16
+  * Maybe get the shortest path using A* (is that it?), find its cost, and then use that as a baseline as others find the true "best" path.

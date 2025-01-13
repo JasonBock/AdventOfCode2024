@@ -19,8 +19,8 @@ public static class SolutionDay16
 
 		var pathsToEvaluate = new List<Path>()
 		{
-			new(map, 0, 0, startLocation.Key, Direction.East, false, []),
-			new(map, 0, 1, startLocation.Key, Direction.North, false, []),
+			new(map, 0, 0, startLocation.Key, Direction.East, false, [ new(startLocation.Key, Direction.East, 0, 0) ]),
+			new(map, 0, 1, startLocation.Key, Direction.North, false, [ new(startLocation.Key, Direction.North, 0, 1) ]),
 		};
 
 		while (pathsToEvaluate.Count > 0)
@@ -59,37 +59,117 @@ public static class SolutionDay16
 					newPaths.RemoveAt(i);
 					i--;
 				}
-
-				//for (var e = 0; e < existingPaths.Length; e++)
-				//{
-				//	var breakout = false;
-				//	var existingPath = existingPaths[e];
-				//	var existingPathJunction = existingPath.VisitedJunctions.Single(
-				//		_ => _.Position == firstPathLastJunction.Position && _.Direction == firstPathLastJunction.Direction);
-
-				//	if (firstPathLastJunction.Cost >= existingPathJunction.Cost)
-				//	{
-				//		newPaths.RemoveAt(i);
-				//		i--;
-				//		breakout = true;
-				//		continue;
-				//	}
-				//	else
-				//	{
-				//		newPaths.Remove(existingPath);
-				//	}
-
-				//	if (breakout)
-				//	{
-				//		break;
-				//	}
-				//}
 			}
 
 			pathsToEvaluate = newPaths;
 		}
 
 		return minimalCost;
+	}
+
+	public static long RunPart2(ImmutableArray<string> input)
+	{
+		var map = SolutionDay16.ParseInput(input);
+
+		var minimalCost = long.MaxValue;
+		var bestLocations = new HashSet<Position>();
+
+		var startLocation = map.Single(_ => _.Value == MapItemType.Start);
+
+		var pathsToEvaluate = new List<Path>()
+		{
+			new(map, 0, 0, startLocation.Key, Direction.East, false, [ new(startLocation.Key, Direction.East, 0, 0) ]),
+			new(map, 0, 1, startLocation.Key, Direction.North, false, [ new(startLocation.Key, Direction.North, 0, 1) ]),
+		};
+
+		while (pathsToEvaluate.Count > 0)
+		{
+			Console.WriteLine(pathsToEvaluate.Count);
+			var newPaths = new List<Path>();
+
+			foreach (var pathToEvaluate in pathsToEvaluate)
+			{
+				if (pathToEvaluate.CurrentCost < minimalCost)
+				{
+					var nextPaths = pathToEvaluate.GetNextPaths();
+					var minimalFinishedNextPath = nextPaths
+						.Where(_ => _.IsFinished && _.CurrentCost <= minimalCost)
+						.GroupBy(_ => _.CurrentCost, _ => _)
+						.MinBy(_ => _.Key);
+
+					if (minimalFinishedNextPath is not null)
+					{
+						if (minimalFinishedNextPath.Key < minimalCost)
+						{
+							minimalCost = minimalFinishedNextPath.Key;
+							bestLocations.Clear();
+						}
+
+						foreach (var bestPath in minimalFinishedNextPath)
+						{
+							// Find all the locations of this path.
+							for (var j = 0; j < bestPath.VisitedJunctions.Length - 1; j++)
+							{
+								var startJunction = bestPath.VisitedJunctions[j];
+								var endJunction = bestPath.VisitedJunctions[j + 1];
+
+								if (startJunction.Direction == Direction.East)
+								{
+									for (var d = startJunction.Position.X; d <= endJunction.Position.X; ++d)
+									{
+										bestLocations.Add(new Position(d, startJunction.Position.Y));
+									}
+								}
+								else if (startJunction.Direction == Direction.South)
+								{
+									for (var d = startJunction.Position.Y; d <= endJunction.Position.Y; ++d)
+									{
+										bestLocations.Add(new Position(startJunction.Position.X, d));
+									}
+								}
+								else if (startJunction.Direction == Direction.West)
+								{
+									for (var d = endJunction.Position.X; d <= startJunction.Position.X; ++d)
+									{
+										bestLocations.Add(new Position(d, startJunction.Position.Y));
+									}
+								}
+								else
+								{
+									for (var d = endJunction.Position.Y; d <= startJunction.Position.Y; ++d)
+									{
+										bestLocations.Add(new Position(startJunction.Position.X, d));
+									}
+								}
+							}
+						}
+					}
+
+					newPaths.AddRange(nextPaths.Where(_ => !_.IsFinished && _.CurrentCost < minimalCost));
+				}
+			}
+
+			// We need to do some pruning.
+			for (var i = 0; i < newPaths.Count; i++)
+			{
+				var firstPath = newPaths[i];
+				var firstPathLastJunction = firstPath.VisitedJunctions[^1];
+
+				if (newPaths.Any(_ => _ != firstPath &&
+					_.VisitedJunctions.Any(
+						_ => _.Position == firstPathLastJunction.Position &&
+							_.Direction == firstPathLastJunction.Direction &&
+							_.Cost < firstPathLastJunction.Cost)))
+				{
+					newPaths.RemoveAt(i);
+					i--;
+				}
+			}
+
+			pathsToEvaluate = newPaths;
+		}
+
+		return bestLocations.Count;
 	}
 
 	private static Map ParseInput(ImmutableArray<string> input)

@@ -111,4 +111,56 @@ public static class SolutionDay16Tests
 
 		Assert.That(SolutionDay16.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(25_198L));
 	}
+
+	[Test]
+	public static void Part2Small()
+	{
+		var input =
+			"""
+			###############
+			#.......#....E#
+			#.#.###.#.###.#
+			#.....#.#...#.#
+			#.###.#####.#.#
+			#.#.#.......#.#
+			#.#.#####.###.#
+			#...........#.#
+			###.#.#####.#.#
+			#...#.....#.#.#
+			#.#.#.###.#.#.#
+			#.....#...#.#.#
+			#.###.#.#.#.#.#
+			#S..#.....#...#
+			###############
+			""";
+
+		Assert.That(SolutionDay16.RunPart2([.. input.Split(Environment.NewLine)]), Is.EqualTo(45));
+	}
+
+	[Test]
+	public static void Part2Large()
+	{
+		var input =
+			"""
+			#################
+			#...#...#...#..E#
+			#.#.#.#.#.#.#.#.#
+			#.#.#.#...#...#.#
+			#.#.#.#.###.#.#.#
+			#...#.#.#.....#.#
+			#.#.#.#.#.#####.#
+			#.#...#.#.#.....#
+			#.#.#####.#.###.#
+			#.#.#.......#...#
+			#.#.###.#####.###
+			#.#.#...#.....#.#
+			#.#.#.#####.###.#
+			#.#.#.........#.#
+			#.#.#.#########.#
+			#S#.............#
+			#################
+			""";
+
+		Assert.That(SolutionDay16.RunPart2([.. input.Split(Environment.NewLine)]), Is.EqualTo(64));
+	}
 }
