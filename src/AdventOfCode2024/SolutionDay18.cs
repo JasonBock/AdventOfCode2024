@@ -66,103 +66,10 @@ public static class SolutionDay18
 public sealed record Position(int X, int Y);
 
 // Lifted from: https://www.geeksforgeeks.org/shortest-path-in-a-binary-maze/
-public static class PathFindingUsingBacktracking
-{
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-	static bool[,] visited;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
-	// Check if it is possible to go to (x, y) from the
-	// current position. The function returns false if the
-	// cell has value 0 or already visited
-	private static bool isSafe(int[,] matrix, bool[,] visited, int x, int y) =>
-		(x >= 0 && x < matrix.GetLength(0) && y >= 0 && y < matrix.GetLength(1) &&
-			matrix[x, y] == 1 && !visited[x, y]);
-
-	private static int findShortestPath(int[,] mat, int i, int j,
-		int x, int y, int min_dist,
-		int dist)
-	{
-
-		if (i == x && j == y)
-		{
-			min_dist = Math.Min(dist, min_dist);
-			return min_dist;
-		}
-
-		// set (i, j) cell as visited
-		visited[i, j] = true;
-		// go to the bottom cell
-		if (isSafe(mat, visited, i + 1, j))
-		{
-			min_dist = findShortestPath(mat, i + 1, j, x, y,
-												 min_dist, dist + 1);
-		}
-		// go to the right cell
-		if (isSafe(mat, visited, i, j + 1))
-		{
-			min_dist = findShortestPath(mat, i, j + 1, x, y,
-												 min_dist, dist + 1);
-		}
-		// go to the top cell
-		if (isSafe(mat, visited, i - 1, j))
-		{
-			min_dist = findShortestPath(mat, i - 1, j, x, y,
-												 min_dist, dist + 1);
-		}
-		// go to the left cell
-		if (isSafe(mat, visited, i, j - 1))
-		{
-			min_dist = findShortestPath(mat, i, j - 1, x, y,
-												 min_dist, dist + 1);
-		}
-		// backtrack: remove (i, j) from the visited matrix
-		visited[i, j] = false;
-		return min_dist;
-	}
-
-	// Wrapper over findShortestPath() function
-	public static int findShortestPathLength(
-		int[,] matrix, int[] source, int[] destination)
-	{
-		ArgumentNullException.ThrowIfNull(matrix);
-		ArgumentNullException.ThrowIfNull(source);
-		ArgumentNullException.ThrowIfNull(destination);
-
-		if (matrix.GetLength(0) == 0
-			 || matrix[source[0], source[1]] == 0
-			 || matrix[destination[0], destination[1]] == 0)
-			return -1;
-
-		var row = matrix.GetLength(0);
-		var col = matrix.GetLength(1);
-
-		// construct an `M × N` matrix to keep track of
-		// visited cells
-		visited = new bool[row, col];
-		for (var i = 0; i < row; i++)
-		{
-			for (var j = 0; j < col; j++)
-				visited[i, j] = false;
-		}
-
-		var dist = Int32.MaxValue;
-		dist = findShortestPath(matrix, source[0], source[1],
-										destination[0], destination[1], dist, 0);
-
-		if (dist != Int32.MaxValue)
-			return dist;
-		return -1;
-	}
-}
-
 #pragma warning disable CA1034 // Nested types should not be visible
 #pragma warning disable CA1051 // Do not declare visible instance fields
 public static class PathFindingUsingBFS
 {
-	//static int ROW = 9;
-	//static int COL = 10;
-
 	// To store matrix cell coordinates
 	public class Point
 	{
