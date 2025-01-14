@@ -529,6 +529,76 @@ This feels like cheating, but finding the shortest path between two points is a 
 
 Don't use backtracking, use BFS. (Of course, duh!)
 
+## Day 19
+
+### Part 1
+
+Maybe I use a `ImmutableDictionary<char, ImmutableArray<string>>` for the tokens. That way you can find those that might match based on the first character quicker, rather than looking at each token.
+
+So, `r, wr, b, g, bwu, rb, gb, br` turns into:
+
+* `'r' : "r", "rb"`
+* `'w' : "wr"`
+* `'b' : "b", "bwu", "br"`
+* `'g' : "g", "gb"`
+
+First word is `"brwrr"`. We can create an extension method on `string` called `bool CanBeMade(Token tokens)`. We start at index 0:
+
+```c#
+var indexes = new SortedSet<int> { 0 };
+
+while(indexes.Count > 0)
+{
+  var index = indexes[0];
+
+  var startingCharacter = self[index];
+
+  if(tokens.TryGetValue(startingCharacter, out startingTokens))
+  {
+    foreach(var startingToken in startingTokens)
+    {
+      var nextIndex = index + startingToken.Length;
+      
+      if((self.Length <= (nextIndex) &&
+        self.Substring(index, startingToken.Length) == token))
+      {
+        if(self.Length == nextIndex)
+        {
+          return true;
+        }
+
+        indexes.Add(nextIndex);
+      }
+    }
+  }
+
+  indexes.Remove(index);
+}
+
+return false;
+```
+
+We look at the character at 0, and it's `'b'`. For all the `'b'`s, two give a match: `"b", and "br"`, so we add 1 and 2 to `indexes`. We can start looking at those indexes since they would have to be after the index we are looking at. We can also remove the 0th index, so we're always looking at the 0th element in `indexes` until there are no more index values, or we found a completion.
+
+So `indexes` would be `[1, 2]`
+Let's order the indexes because that could matter.
+
+For index 1, `'r'` has one match: `"r"`, so we have a new index: 2. **But**, we have that in our current indexes, so we'll basically ignore it.
+For index 2, `'w'` has one match: `"wr`, so we have a new index: 4.
+For index 4, `'r'` has one match: `"r"`. This puts us to the end of the string, so we've found a towel pattern, return true.
+
+"ubwu" is supposedly not workable:
+
+Start at index 0. There are no keys in the token dictionary, so we'll remove 0 as an index, there will be no more in the set, so we return false.
+
+"bbrgwb" is also impossible.
+
+Start at index 0. This would add 1.
+Index 1 would add 2 and 3.
+Index 2 would add 3, but we already have that.
+Index 3 would add 4.
+Index 4 wouldn't add any indexes, so we have no more indexes, and we return false.
+
 # TODOs
 * Day 1
   * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
@@ -542,3 +612,5 @@ Don't use backtracking, use BFS. (Of course, duh!)
   * Part 1 - Parallelization would probably make this quicker.
 * Day 16
   * Maybe get the shortest path using A* (is that it?), find its cost, and then use that as a baseline as others find the true "best" path.
+* Day 18
+  * Part 2 - A small optimization would be to only find if a path exists after a certain point in the file. Meaning, the quickest way to block off the grid would be to create a diagonal across the grid. So, basically you'd build up the collisions, but you'd only check to see if it's block at index `(int)Math.Sqrt(size ^^ 2 + size ^^ 2)`, more or less. For the 71 size example, that's 100.
