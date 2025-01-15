@@ -21,6 +21,7 @@ public static class SolutionDay19Tests
 			bbrgwb
 			""";
 
+
 		Assert.That(SolutionDay19.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(6));
 	}
 }

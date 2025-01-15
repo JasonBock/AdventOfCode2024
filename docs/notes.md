@@ -549,18 +549,16 @@ var indexes = new SortedSet<int> { 0 };
 
 while(indexes.Count > 0)
 {
-  var index = indexes[0];
+  var currentIndex = indexes[0];
 
-  var startingCharacter = self[index];
-
-  if(tokens.TryGetValue(startingCharacter, out startingTokens))
+  if(tokens.TryGetValue(self[currentIndex], out startingTokens))
   {
     foreach(var startingToken in startingTokens)
     {
-      var nextIndex = index + startingToken.Length;
-      
+      var nextIndex = currentIndex + startingToken.Length;
+
       if((self.Length <= (nextIndex) &&
-        self.Substring(index, startingToken.Length) == token))
+        self.AsSpan(currentIndex, startingToken.Length).SequenceEqual(token.AsSpan())))()
       {
         if(self.Length == nextIndex)
         {
@@ -572,7 +570,7 @@ while(indexes.Count > 0)
     }
   }
 
-  indexes.Remove(index);
+  indexes.Remove(currentIndex);
 }
 
 return false;
