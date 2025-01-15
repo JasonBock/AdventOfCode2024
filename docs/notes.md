@@ -542,7 +542,7 @@ So, `r, wr, b, g, bwu, rb, gb, br` turns into:
 * `'b' : "b", "bwu", "br"`
 * `'g' : "g", "gb"`
 
-First word is `"brwrr"`. We can create an extension method on `string` called `bool CanBeMade(Token tokens)`. We start at index 0:
+First word is `"brwrr"`. We can create an extension method on `string` called `bool CanBeMade(Tokens tokens)`. We start at index 0:
 
 ```c#
 var indexes = new SortedSet<int> { 0 };
@@ -558,7 +558,7 @@ while(indexes.Count > 0)
       var nextIndex = currentIndex + startingToken.Length;
 
       if((self.Length <= (nextIndex) &&
-        self.AsSpan(currentIndex, startingToken.Length).SequenceEqual(token.AsSpan())))()
+        self.AsSpan(currentIndex, startingToken.Length).SequenceEqual(token.AsSpan())))
       {
         if(self.Length == nextIndex)
         {
@@ -597,6 +597,10 @@ Index 2 would add 3, but we already have that.
 Index 3 would add 4.
 Index 4 wouldn't add any indexes, so we have no more indexes, and we return false.
 
+## Part 2
+
+I think we need to preserve valid branch counts for previously computed indexes
+
 # TODOs
 * Day 1
   * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
@@ -612,3 +616,5 @@ Index 4 wouldn't add any indexes, so we have no more indexes, and we return fals
   * Maybe get the shortest path using A* (is that it?), find its cost, and then use that as a baseline as others find the true "best" path.
 * Day 18
   * Part 2 - A small optimization would be to only find if a path exists after a certain point in the file. Meaning, the quickest way to block off the grid would be to create a diagonal across the grid. So, basically you'd build up the collisions, but you'd only check to see if it's block at index `(int)Math.Sqrt(size ^^ 2 + size ^^ 2)`, more or less. For the 71 size example, that's 100.
+* Day 19
+  * Part 1 - Is the `Span<>` approach really "better" than `Substring()`?
