@@ -628,19 +628,19 @@ That's 18 picoseconds.
 
 Now, walk the solution, and look in each direction other than the one you're going. If there's a wall that way, and there's no wall 1 position after that (mod x or y, depending on which direction you're looking), that's a possible cut. 
 
-At (2, 3), there's one shortcut. The starting index of the cheat is 2. The end is 6. This would save 2 picoseconds. So, theory: 
+At (2, 3), there's one shortcut. The starting index of the cheat is 3. The end is 7. This would save 2 picoseconds. So, theory: 
 
 If (endIndex > startIndex), then (endIndex - startIndex) - 2
 
-(6 - 2) - 2 = 2
+(7 - 3) - 2 = 2
 
-At (5, 1), there's a shortcut. The starting index is 9. The end is 15. This would save 4.
+At (5, 1), there's a shortcut. The starting index is 10. The end is 16. This would save 4.
 
-(15 - 9) - 2 = 4
+(16 - 10) - 2 = 4
 
 Seems to hold.
 
-Now, let's say that we go to (3, 5), there's a shortcut, but it's the wrong way. Starting index is 15, end is 9, so don't need to consider it.
+Now, let's say that we go to (5, 3), there's a shortcut, but it's the wrong way. Starting index is 16, end is 10, so don't need to consider it.
 
 Cheats are stored as Dictionary<int, HashSet<(int, int)>>. The key is the savings, and the value are the unique start and end indexes.
 
