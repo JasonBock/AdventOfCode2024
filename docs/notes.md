@@ -601,6 +601,55 @@ Index 4 wouldn't add any indexes, so we have no more indexes, and we return fals
 
 I think we need to preserve valid branch counts for previously computed indexes
 
+## Day 20
+
+### Part 1
+
+S => Line 78, Ch 70
+E => Line 70, Ch 51
+
+Total file size is 20K, so not that big.
+
+When parsing the file, just get the positions of the path.
+
+Then, at the start, store the solution with (Position, Direction). (May not need to store the direction, but it might be a convenience.)
+
+Let's do a simple maze:
+
+#########
+#.......#
+#.#####.#
+#...#...#
+###.#.###
+###S#E###
+#########
+
+That's 18 picoseconds.
+
+Now, walk the solution, and look in each direction other than the one you're going. If there's a wall that way, and there's no wall 1 position after that (mod x or y, depending on which direction you're looking), that's a possible cut. 
+
+At (2, 3), there's one shortcut. The starting index of the cheat is 2. The end is 6. This would save 2 picoseconds. So, theory: 
+
+If (endIndex > startIndex), then (endIndex - startIndex) - 2
+
+(6 - 2) - 2 = 2
+
+At (5, 1), there's a shortcut. The starting index is 9. The end is 15. This would save 4.
+
+(15 - 9) - 2 = 4
+
+Seems to hold.
+
+Now, let's say that we go to (3, 5), there's a shortcut, but it's the wrong way. Starting index is 15, end is 9, so don't need to consider it.
+
+Cheats are stored as Dictionary<int, HashSet<(int, int)>>. The key is the savings, and the value are the unique start and end indexes.
+
+If we don't store the direction when we find the path, we can just look all directions at every point. That'll be a bit more work each time, but it'll make the search a bit simpler.
+
+...
+
+Maybe we don't need to do 2 passes. As we build the path, we look to see if a cheat exists at each point. We can't evaluate it, but we can capture the start/end positions. Once we get the path, we can evaluate each cheat
+
 # TODOs
 * Day 1
   * Part 1 - Do a comparison on the difference between using a `List<>` and an `int[]`
