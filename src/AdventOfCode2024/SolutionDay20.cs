@@ -37,10 +37,6 @@ public static class SolutionDay20
 
 	private static (ImmutableArray<Position>, ImmutableArray<(Position, Position)>) GetPath(ImmutableArray<string> input)
 	{
-		var path = new List<Position>();
-
-		var cheats = new HashSet<(Position, Position)>();
-
 		Position? startPosition = null;
 
 		for (var y = 0; y < input.Length; y++)
@@ -53,6 +49,9 @@ public static class SolutionDay20
 				break;
 			}
 		}
+
+		var path = new List<Position> { startPosition! };
+		var cheats = new HashSet<(Position, Position)>();
 
 		var maxX = input[0].Length;
 		var maxY = input.Length;
@@ -71,7 +70,9 @@ public static class SolutionDay20
 
 			if (eastCharacter == SolutionDay20.Wall)
 			{
-				if (input[eastPosition.Y][(eastPosition.X + 1 + maxX) % maxX] == SolutionDay20.Path)
+				var secondCharacter = input[eastPosition.Y][(eastPosition.X + 1 + maxX) % maxX];
+
+				if (secondCharacter == SolutionDay20.Path || secondCharacter == SolutionDay20.End)
 				{
 					var endCheatPosition = currentPosition with { X = currentPosition.X + 2 };
 
@@ -97,7 +98,9 @@ public static class SolutionDay20
 
 			if (southCharacter == SolutionDay20.Wall)
 			{
-				if (input[(southPosition.Y + 1 + maxY) % maxY][southPosition.X] == SolutionDay20.Path)
+				var secondCharacter = input[(southPosition.Y + 1 + maxY) % maxY][southPosition.X];
+
+				if (secondCharacter == SolutionDay20.Path || secondCharacter == SolutionDay20.End)
 				{
 					var endCheatPosition = currentPosition with { Y = currentPosition.Y + 2 };
 
@@ -123,7 +126,9 @@ public static class SolutionDay20
 
 			if (westCharacter == SolutionDay20.Wall)
 			{
-				if (input[westPosition.Y][(westPosition.X - 1 + maxX) % maxX] == SolutionDay20.Path)
+				var secondCharacter = input[westPosition.Y][(westPosition.X - 1 + maxX) % maxX];
+
+				if (secondCharacter == SolutionDay20.Path || secondCharacter == SolutionDay20.End)
 				{
 					var endCheatPosition = currentPosition with { X = currentPosition.X - 2 };
 
@@ -149,7 +154,9 @@ public static class SolutionDay20
 
 			if (northCharacter == SolutionDay20.Wall)
 			{
-				if (input[(northPosition.Y - 1 + maxY) % maxY][northPosition.X] == SolutionDay20.Path)
+				var secondCharacter = input[(northPosition.Y - 1 + maxY) % maxY][northPosition.X];
+
+				if (secondCharacter == SolutionDay20.Path || secondCharacter == SolutionDay20.End)
 				{
 					var endCheatPosition = currentPosition with { Y = currentPosition.Y - 2 };
 
