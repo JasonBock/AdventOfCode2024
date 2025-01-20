@@ -1,5 +1,4 @@
-﻿using AdventOfCode2024.Day20;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Numerics;
 
 namespace AdventOfCode2024.Day22.Tests;
