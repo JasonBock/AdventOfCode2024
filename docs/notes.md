@@ -621,7 +621,8 @@ Let's do a simple maze:
 #.#####.#
 #...#...#
 ###.#.###
-###S#E###
+###S#.###
+#####E###
 #########
 
 That's 18 picoseconds.
@@ -649,6 +650,25 @@ If we don't store the direction when we find the path, we can just look all dire
 ...
 
 Maybe we don't need to do 2 passes. As we build the path, we look to see if a cheat exists at each point. We can't evaluate it, but we can capture the start/end positions. Once we get the path, we can evaluate each cheat
+
+(7, 7) in the example is where the cheat of 64 savings occurs. Why do we think it's 63? I think I just answered my statement.
+
+(4, 30) is giving 29, not 30. But, (2, 44) is giving the correct answer.
+
+## Day 21
+
+### Part 1
+
+## Day 23
+
+### Part 1
+
+x|y
+
+x|z     z|x
+
+z|y
+
 
 # TODOs
 * Day 1
