@@ -44,10 +44,10 @@ using AdventOfCode2024.Day9;
 //RunDay19();
 //RunDay20();
 //RunDay21();
-//RunDay22();
+RunDay22();
 //RunDay23();
 //RunDay24();
-RunDay25();
+//RunDay25();
 
 static void RunDay1()
 {
@@ -195,7 +195,8 @@ static void RunDay21() =>
 static void RunDay22()
 {
 	Console.WriteLine(nameof(RunDay22));
-	Console.WriteLine($"Part 1 = {SolutionDay22.RunPart1([.. File.ReadAllLines("Day22Input.txt")])}");
+	//Console.WriteLine($"Part 1 = {SolutionDay22.RunPart1([.. File.ReadAllLines("Day22Input.txt")])}");
+	Console.WriteLine($"Part 2 = {SolutionDay22.RunPart2([.. File.ReadAllLines("Day22Input.txt")])}");
 }
 
 static void RunDay23()

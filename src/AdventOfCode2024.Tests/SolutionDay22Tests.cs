@@ -15,7 +15,7 @@ public static class SolutionDay22Tests
 	[TestCase(15887950, 8, 7753432)]
 	[TestCase(15887950, 9, 5908254)]
 	public static void GetSecret(long initialSecret, int iterations, long expectedSecret) =>
-		Assert.That(SolutionDay22.GetSecret(initialSecret, iterations), Is.EqualTo(new BigInteger(expectedSecret)));
+		Assert.That(SolutionDay22.GetSecret(initialSecret, iterations), Is.EqualTo(expectedSecret));
 
 	[Test]
 	public static void Part1()
@@ -29,6 +29,21 @@ public static class SolutionDay22Tests
 			""";
 
 		Assert.That(
-			SolutionDay22.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(new BigInteger(37327623)));
+			SolutionDay22.RunPart1([.. input.Split(Environment.NewLine)]), Is.EqualTo(37327623));
+	}
+
+	[Test]
+	public static void Part2()
+	{
+		var input =
+			"""
+			1
+			2
+			3
+			2024
+			""";
+
+		Assert.That(
+			SolutionDay22.RunPart2([.. input.Split(Environment.NewLine)]), Is.EqualTo(23));
 	}
 }

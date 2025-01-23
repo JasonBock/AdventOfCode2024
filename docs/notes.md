@@ -2,6 +2,18 @@
 
 These are my notes for each day's solutions, if I had any.
 
+## Current Plan
+
+Right now I have 42 stars. I'm not sure how much more I can get done, espeically with time constraints on things, and just wanting to move on to other things. Here's what I think the plan is and in the order I think is reasonable (1 being pretty reasonable to 10 being oh my god I have no clue):
+
+* Day 23, Part 2 - 4 - This is simple to understand, but I know this could get out of hand rather quickly if I don't find a trick.
+* Day 20, Part 2 - 4 - I get what needs to be done, but I'm not sure I can figure out a trick to prevent it from exploding in complexity.
+* Day 17, Part 2 - 5 - I still don't know what the "trick" is, but I don't think all hope is lost here.
+* Day 24, Part 2 - 6 - I don't get the problem statement, but I think once I do, it might be doable.
+* Day 21, Parts 1 and 2 - 9 - LOL. I get the problem statement, but I have no idea how to optimize Part 1, and I've Part 2 is even harder.
+
+Note that Part 2 of Day 25 isn't even doable until I get all of these.
+
 ## Day 7
 
     3^2  3^1  3^0
